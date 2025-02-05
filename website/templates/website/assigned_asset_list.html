@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}
+Assigned Assets
+{% endblock %}
+{% block content %}
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">Assigned Assets</h1>
+          </div>
+          <!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item">
+                <a href="#">Home</a>
+              </li>
+              <li class="breadcrumb-item active">Assigned Assets</li>
+            </ol>
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <a href="{% url 'assigned_asset_create' %}" class="btn btn-success mb-3">Assign New Asset</a>
+
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+              <tr>
+                <th>Transaction ID</th>
+                <th>Employee</th>
+                <th>Business Unit</th>
+                <th>Business Unit To</th>
+                <th>Purpose</th>
+                <th>Assets</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for transaction in transactions %}
+                <tr>
+                  <td>{{ transaction.transaction_id }}</td>
+                  <td>{{ transaction.employee }}</td>
+                  <td>{{ transaction.business_unit }}</td>
+                  <td>{{ transaction.business_unitto }}</td>
+                  <td>{{ transaction.purpose }}</td>
+                  <td>
+                    <a href="{% url 'assigned_asset_detail' transaction.pk %}" class="btn btn-info btn-sm">View</a>
+                    <a href="{% url 'assigned_asset_update' transaction.pk %}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="{% url 'assigned_asset_delete' transaction.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                  </td>
+                </tr>
+              {% empty %}
+                <tr>
+                  <td colspan="6" class="text-center">No assigned assets found.</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+    <!-- /.content -->
+  </div>
+{% endblock %}

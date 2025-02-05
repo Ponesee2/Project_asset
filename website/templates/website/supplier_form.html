@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}
+    {% if form.instance.pk %}Update{% else %}Create{% endif %} Supplier
+{% endblock %}
+{% block content %}
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">{% if form.instance.pk %}Update{% else %}Create{% endif %} Supplier</h1>
+          </div>
+          <!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item active">{% if form.instance.pk %}Update{% else %}Create{% endif %} Supplier</li>
+            </ol>
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <!-- Your content here -->
+        <h2>{% if form.instance.pk %}Update{% else %}Create{% endif %} Supplier</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="btn btn-primary mb-3" type="submit">Save</button>
+            <a class="btn btn-secondary mb-3" href="{% url 'supplier_list' %}">Back to List</a>
+        </form>
+      </div>
+    </section>
+    <!-- /.content -->
+  </div>
+{% endblock %}

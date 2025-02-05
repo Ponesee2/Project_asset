@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}
+  Delete Employee
+{% endblock %}
+{% block content %}
+    <div class="content-wrapper">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">Delete Employee</h1>
+                    </div>
+                        <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item active">Delete Employee</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <section class="content">
+              <div class="container-fluid ">
+                <h1>Delete Employee</h1>
+                <p>Are you sure you want to delete "{{ employee.first_name }} {{ employee.last_name }}"?</p>
+                <form method="POST">
+                    {% csrf_token %}
+                    <button class="btn btn-danger" type="submit">Yes, delete</button>
+                    <a class="btn btn-secondary" href="{% url 'employee_detail' employee.pk %}">Cancel</a>
+                </form>
+              </div>
+            </section>
+        </div>
+{% endblock %}

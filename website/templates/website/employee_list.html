@@ -1,0 +1,94 @@
+ {% extends "base.html" %} 
+
+    {% block title %} 
+    Employee List
+    {% endblock %} 
+    
+    {% block content %} 
+        <div class="content-wrapper">
+            <div class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1 class="m-0">Employee List</h1>
+                        </div>
+                            <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item active">Employee List</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <section class="content">
+                    <div class="container-fluid">
+                        <div class="d-flex mb-3">
+                            <a class="btn btn-primary" href="{% url 'create_employee' %}">Add Employee</a>
+                        </div>
+                        <table id="businesstable" class="table">
+                            <thead>
+                                <tr>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Email</th>
+                                    <th>Department</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for employee in employees %}
+                                    <tr>
+                                        <td>{{ employee.first_name }}</td>
+                                        <td>{{ employee.last_name }}</td>
+                                        <td>{{ employee.email }}</td>
+                                        <td>{{ employee.department.name }}</td>
+                                        <td>
+                                            <a class="btn btn-primary " href="{% url 'update_employee' employee.pk %}">Edit</a>
+                                            <a class="btn btn-danger " href="{% url 'delete_employee' employee.pk %}">Delete</a>
+                                            <a class="btn btn-secondary" href="{% url 'employee_detail' employee.pk %}">View</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+        </div>
+        <script>
+            $(document).ready(function() {
+                var table = $('#businesstable').DataTable({
+                    responsive: true,
+                    autoWidth: false,
+                    searching: true,
+                    ordering: true,
+                    select: {
+                        style: 'multi' // Enable multi-select
+                    },
+                    columnDefs: [
+                        { targets: [0, 1, 2], searchable: true }, // Enable search for specific columns
+                        { targets: [3], orderable: false } // Disable sorting for actions column
+                    ],
+                    initComplete: function () {
+                        var business_unit = $('#business_unit');
+                
+                        // Populate Academic Term Filter Dropdown (Column 3)
+                        this.api().columns(2).every(function () {
+                            var column = this;
+                            column.data().unique().sort().each(function (d, j) {
+                                if (!$(`#business_unit option[value="${d}"]`).length) {
+                                    business_unit.append('<option value="' + d + '">' + d + '</option>');
+                                }
+                            });
+                        });
+                    }
+                });
+        
+                // Filter by Course Subject
+                $('#business_unit').on('change', function() {
+                    var location = $(this).val();
+                    table.column(2).search(location ? '^' + location + '$' : '', true, false).draw();
+                });
+            });
+        
+          </script>
+    {% endblock %}

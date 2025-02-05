@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+{% block title %}
+  Sample Page
+{% endblock %}
+{% block content %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    .container {
+        width: 90%;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #000;
+        background-color: #fff;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid black;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+
+    .logo img {
+        max-height: 50px;
+    }
+
+    .title {
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .info-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    .info-table th, .info-table td {
+        padding: 8px;
+        border: 1px solid black;
+        text-align: left;
+    }
+
+    .signature-section {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+    }
+
+    .signature {
+        text-align: center;
+        width: 30%;
+        padding-top: 5px;
+    }
+    .name {
+        border-top: 1px solid black;
+        padding-top: 5px;
+    }
+
+    .print-btn {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .print-btn button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    .print-btn button:hover {
+        background: #0056b3;
+    }
+
+    .signaturedby {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+    .design {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: large;
+        margin-right: 20px;
+    }
+
+    .designname{
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: large;
+        border-bottom: 2px solid black;
+        margin-left: 20px;
+    }   
+</style>
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">Sample Page</h1>
+          </div>
+          <!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item">
+                <a href="#">Home</a>
+              </li>
+              <li class="breadcrumb-item active">Sample Page</li>
+            </ol>
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <!-- Your content here -->
+        <div class="container-fluid">
+            <div class="container">
+                <div class="header">
+                    <div class="logo">
+                        <!-- You can add the company logo here -->
+                        <img src="https://www.classify.com.ph/assets/Logo-094897d4.png" alt="Company Logo">
+                    </div>
+                    <div class="title">
+                        ASSET TRANSFER FORM
+                    </div>
+                    <div class="date">
+                        Date: {{ transaction.date|date:"F d, Y" }}
+                    </div>
+                </div>
+        
+                <!-- Information Table -->
+                <div class="d-flex flex-row w-100 ">
+                    <p class="design">Requested by: <p>
+                    <p class="designname">{{ transaction.employee }} <p>
+                    <p  style="margin-left: 50px;" class="design">Date: <p>
+                    <p class="designname">{{ transaction.date }} <p>
+                </div>
+                <div class="d-flex flex-row w-75">
+                    <p class="design">Business Unit: <p>
+                    <p class="designname">{{ transaction.business_unit }} <p>
+                </div>
+                <div class="d-flex flex-row w-75">
+                    <p class="design">Department: <p>
+                    <p class="designname">{{ transaction.department }} <p>
+                </div>
+                <div class="d-flex flex-row w-75">
+                    <p class="design">Purpose: <p>
+                    <p class="designname">{{ transaction.purpose }} <p>
+                </div>
+                <!-- Assets Assigned Table -->
+                <table class="info-table">
+                    <thead>
+                        <tr>
+                            <th>Asset Tag</th>
+                            <th>Asset Name</th>
+                            <th>Model/Serial Number</th>
+                            <th>Quantity</th>
+                            <th>Business Unit From:</th>
+                            <th>Department From</th>
+                            <th>Business Unit To:</th>
+                            <th>Department To:</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for asset in transaction.assets.all %}
+                        <tr>
+                            <td>{{ asset.asset.asset_tag }}</td>
+                            <td>{{ asset.asset }}</td>
+                            <td>{{ asset.asset.serial_number }}</td>
+                            <td>{{ asset.quantity }}</td>
+                            <td>{{ transaction.business_unit }}</td>
+                            <td>{{ transaction.department }}</td>
+                            <td>{{ transaction.business_unitto }}</td>
+                            <td>{{ transaction.departmentto }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+        
+                <!-- Action Buttons -->
+        
+                <!-- Signature Section -->
+                <div class="signature-section ">
+                    <div class="signature mt-5">
+                        <p>{{ transaction.manager }}</p>
+                        <p class="name" >Dept. / Gen. Manager</p>
+                    </div>
+                    <div class="signature mt-5">
+                        <p>{{ transaction.admin }}</p>
+                        <p class="name" >IT Asset Administrator</p>
+                    </div>
+                    <div class="signature mt-5">
+                        <p>{{ transaction.corporatemanager }}</p>
+                        <p class="name" >Corporate IT Manager</p>
+                    </div>
+                </div>
+                <div class="signaturedby mt-5 ">
+                    <p >{{ transaction.employee }}</p>
+                    <p class="name w-25" >Recieved by:</p>
+                </div>
+ 
+                <!-- Print Button -->
+                <div class="print-btn">
+                    <button onclick="window.print()">Print Asset Transfer Form</button>
+                </div>
+            </div>
+        </div>        
+      </div>
+    </section>
+    <!-- /.content -->
+  </div>
+{% endblock %}

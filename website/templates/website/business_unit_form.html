@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}
+  Sample Page
+{% endblock %}
+{% block content %}
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">Update Business Unit</h1>
+          </div>
+          <!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item">
+                <a href="#">Home</a>
+              </li>
+              <li class="breadcrumb-item active">Update Business Unit</li>
+            </ol>
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid d-flex flex-column justify-content-center align-items-center">
+        <h2>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Business Unit</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group ">
+                {{ form.name.label_tag }}<br>
+                {{ form.name }}
+                {% if form.name.errors %}
+                    <ul>
+                    {% for error in form.name.errors %}
+                        <li style="color:red; size: 75%;">{{ error }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+    
+            <div class="form-group ">
+                {{ form.shortname.label_tag }}<br>
+                {{ form.shortname }}
+                {% if form.shortname.errors %}
+                    <ul>
+                    {% for error in form.shortname.errors %}
+                        <li style="color:red;">{{ error }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+    
+            <div class="form-group ">
+                {{ form.location.label_tag }}<br>
+                {{ form.location }}
+                {% if form.location.errors %}
+                    <ul>
+                    {% for error in form.location.errors %}
+                        <li style="color:red;">{{ error }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            <button class="btn btn-primary mt-3" type="submit">Save</button>
+            <a class="btn btn-danger mt-3" href="{% url 'business_unit_list' %}">Cancel</a>
+        </form>
+      </div>
+    </section>
+    <!-- /.content -->
+  </div>
+{% endblock %}

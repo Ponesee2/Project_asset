@@ -1,0 +1,50 @@
+{% load static %}
+<!-- Navbar -->
+<nav class="main-header navbar navbar-expand fixed-top">
+  <!-- Left navbar links -->
+  <ul class="navbar-nav">
+    <li class="nav-item">
+      <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars text-dark"></i></a>
+    </li>
+  </ul>
+
+  <!-- Right navbar links -->
+  <ul class="navbar-nav ml-auto">
+    <!-- Notifications Dropdown Menu -->
+
+    <!-- User Dropdown Menu -->
+    <li class="nav-item dropdown">
+      <a class="nav-link" data-toggle="dropdown" href="#" style="display: flex; align-items: center;">
+        <span class="text-dark d-flex align-items-center"><span class="dot mr-2"></span> Hi, User</span>
+        <div class="header-profile-image" style="width: 30px; height: 30px; overflow: hidden; border-radius: 50%; margin-left: 10px;">
+          <img class="img-fluid" src="" alt="User Image" style="width: 100%; height: 100%; object-fit: cover;" />
+        </div>
+        <i class="fas fa-caret-down text-dark ml-2"></i>
+      </a>
+      <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+        <a href="#" class="dropdown-item"><i class="fas fa-user-cog mr-2"></i> Profile Settings</a>
+        <a href="#" class="dropdown-item"><i class="fas fa-cogs mr-2"></i> Settings</a>
+        <div class="dropdown-divider"></div>
+        <a href="#" class="dropdown-item" data-toggle="modal" data-target="#logoutModal"><i class="fas fa-sign-out-alt mr-2"></i> Logout</a>
+      </div>
+    </li>
+  </ul>
+</nav>
+<!-- /.navbar -->
+
+<!-- Logout Confirmation Modal -->
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">Are you sure you want to logout?</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <a href="#" class="btn btn-primary">Logout</a>
+      </div>
+    </div>
+  </div>
+</div>

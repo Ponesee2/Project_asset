@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}
+    Asset Categories
+{% endblock %}
+{% block content %}
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">Asset Category List</h1>
+          </div>
+          <!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item active">Asset Category List</li>
+            </ol>
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <!-- Your content here -->
+        <a class="btn btn-primary mb-3" href="{% url 'asset_category_create' %}">Add New Category</a>
+        <table id="Assettable" class="table table-striped table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Subcategory</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in categories %}
+                <tr>
+                    <td>{{ category.name }}</td>
+                    <td>{{ category.sub_category }}</td>
+                    <td>
+                        <a class="btn btn-primary" href="{% url 'asset_category_update' category.pk %}">Edit</a> 
+                        <a class="btn btn-danger" href="{% url 'asset_category_delete' category.pk %}">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+      </div>
+    </section>
+    <!-- /.content -->
+  </div>
+  <script>
+    $(document).ready(function() {
+        var table = $('#Assettable').DataTable({
+            responsive: true,
+            autoWidth: false,
+            searching: true,
+            ordering: true,
+            select: {
+                style: 'multi' // Enable multi-select
+            },
+            columnDefs: [
+                { targets: [0, 1, 2], searchable: true }, // Enable search for specific columns
+                { targets: [3], orderable: false } // Disable sorting for actions column
+            ],
+            initComplete: function () {
+                var business_unit = $('#business_unit');
+        
+                // Populate Academic Term Filter Dropdown (Column 3)
+                this.api().columns(2).every(function () {
+                    var column = this;
+                    column.data().unique().sort().each(function (d, j) {
+                        if (!$(`#business_unit option[value="${d}"]`).length) {
+                            business_unit.append('<option value="' + d + '">' + d + '</option>');
+                        }
+                    });
+                });
+            }
+        });
+
+        // Filter by Course Subject
+        $('#business_unit').on('change', function() {
+            var location = $(this).val();
+            table.column(2).search(location ? '^' + location + '$' : '', true, false).draw();
+        });
+    });
+</script>
+{% endblock %}

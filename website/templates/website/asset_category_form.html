@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+<title>
+    {% if form.instance.pk %}Update{% else %}Create{% endif %} Asset Category
+</title>
+{% block content %}
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">{% if form.instance.pk %}Update{% else %}Create{% endif %} Asset Category</h2></h1>
+          </div>
+          <!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item">
+                <a href="#">Home</a>
+              </li>
+              <li class="breadcrumb-item active">
+                {% if form.instance.pk %}Update{% else %}Create{% endif %} Asset Category
+              </li>
+            </ol>
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <!-- Your content here -->
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a class="btn btn-secondary" href="{% url 'asset_category_list' %}">Back to List</a>
+            </form>  
+      </div>
+    </section>
+    <!-- /.content -->
+  </div>
+{% endblock %}

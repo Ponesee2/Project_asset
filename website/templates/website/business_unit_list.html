@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block title %}
+  Sample Page
+{% endblock %}
+{% block content %}
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">Add New Business Unit</h1>
+          </div>
+          <!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item">
+                <a href="#">Home</a>
+              </li>
+              <li class="breadcrumb-item active">Add New Business Unit</li>
+            </ol>
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <a class="btn btn-primary mb-2" href="{% url 'create_business_unit' %}">Add New Business Unit</a>
+            
+        <div class="mt-5">
+            <div class="row">
+                <div class="col-md-2">
+                    <label for="business_unit" class="form-label">Filter business unit</label>
+                    <select class="form-select" id="business_unit" class="form-control">
+                        <option value="">Select All</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive mt-3">
+            <table id="businesstable" class="table table-striped table-hover table-bordered" data-search="true" data-pagination="true">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Shortname</th>
+                        <th>Location</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for business_unit in business_units %}
+                    <tr>
+                        <td>{{ business_unit.name }}</td>
+                        <td>{{ business_unit.shortname }}</td>
+                        <td>{{ business_unit.location }}</td>
+                        <td>
+                            <a class="btn btn-primary" href="{% url 'update_business_unit' business_unit.pk %}">Edit</a>
+                            <a class="btn btn-danger" href="{% url 'delete_business_unit' business_unit.pk %}">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+      </div>
+    </section>
+    <!-- /.content -->
+  </div>
+  <script>
+    $(document).ready(function() {
+        var table = $('#businesstable').DataTable({
+            responsive: true,
+            autoWidth: false,
+            searching: true,
+            ordering: true,
+            select: {
+                style: 'multi' // Enable multi-select
+            },
+            columnDefs: [
+                { targets: [0, 1, 2], searchable: true }, // Enable search for specific columns
+                { targets: [3], orderable: false } // Disable sorting for actions column
+            ],
+            initComplete: function () {
+                var business_unit = $('#business_unit');
+        
+                // Populate Academic Term Filter Dropdown (Column 3)
+                this.api().columns(2).every(function () {
+                    var column = this;
+                    column.data().unique().sort().each(function (d, j) {
+                        if (!$(`#business_unit option[value="${d}"]`).length) {
+                            business_unit.append('<option value="' + d + '">' + d + '</option>');
+                        }
+                    });
+                });
+            }
+        });
+
+        // Filter by Course Subject
+        $('#business_unit').on('change', function() {
+            var location = $(this).val();
+            table.column(2).search(location ? '^' + location + '$' : '', true, false).draw();
+        });
+    });
+
+  </script>
+{% endblock %}

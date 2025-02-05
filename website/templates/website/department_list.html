@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block title %}
+  Sample Page
+{% endblock %}
+{% block content %}
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">Department List</h1>
+          </div>
+          <!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item active">Department List</li>
+            </ol>
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <a class="btn btn-primary" href="{% url 'create_department' %}">Create New Department</a>
+
+        
+        <div class="table-responsive mt-3">
+            <table id="businesstable" class="table table-striped table-hover table-bordered" data-search="true" data-pagination="true">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Shortname</th>
+                        <th>Location</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for department in departments %}
+                    <tr>
+                        <td>{{ department.name }}</td>
+                        <td>{{ department.location }}</td>
+                        <td>{{ department.business_unit }}</td>
+                        <td>
+                            <a class="btn btn-info" href="{% url 'department_detail' department.pk %}">
+                                Edit
+                            </a>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+      </div>
+    </section>
+    <!-- /.content -->
+  </div>
+  <script>
+    $(document).ready(function() {
+        var table = $('#businesstable').DataTable({
+            responsive: true,
+            autoWidth: false,
+            searching: true,
+            ordering: true,
+            select: {
+                style: 'multi' // Enable multi-select
+            },
+            columnDefs: [
+                { targets: [0, 1, 2], searchable: true }, // Enable search for specific columns
+                { targets: [3], orderable: false } // Disable sorting for actions column
+            ],
+            initComplete: function () {
+                var business_unit = $('#business_unit');
+        
+                // Populate Academic Term Filter Dropdown (Column 3)
+                this.api().columns(2).every(function () {
+                    var column = this;
+                    column.data().unique().sort().each(function (d, j) {
+                        if (!$(`#business_unit option[value="${d}"]`).length) {
+                            business_unit.append('<option value="' + d + '">' + d + '</option>');
+                        }
+                    });
+                });
+            }
+        });
+
+        // Filter by Course Subject
+        $('#business_unit').on('change', function() {
+            var location = $(this).val();
+            table.column(2).search(location ? '^' + location + '$' : '', true, false).draw();
+        });
+    });
+
+  </script>
+{% endblock %}

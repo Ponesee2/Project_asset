@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block title %}
+    {% if form.instance.pk %} Edit Assigned Asset {% else %} Add New Assigned Asset {% endif %}
+{% endblock %}
+{% block content %}
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">{% if form.instance.pk %} Edit Assigned Asset {% else %} Add New Assigned Asset {% endif %}</h1>
+          </div>
+          <!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item active">{% if form.instance.pk %} Edit Assigned Asset {% else %} Add New Assigned Asset {% endif %}</li>
+            </ol>
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <!-- Your content here -->
+       <form method="post">
+          {% csrf_token %}
+          <div class="d-flex flex-row w-100">
+            <div class="form-group">
+                <label for="{{ forms.business_unit.id_for_label }}">Business Unit</label>
+                {{ transaction_form.business_unit }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.department.id_for_label }}">Department</label>
+                {{ transaction_form.department }}
+            </div>
+          </div>
+              
+            <div class="form-group">
+                <label for="{{ form.employee.id_for_label }}">Employee</label>
+                {{ transaction_form.employee }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.business_unitto.id_for_label }}">Business Unit To</label>
+                {{ transaction_form.business_unitto }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.departmentto.id_for_label }}">Department To</label>
+                {{ transaction_form.departmentto }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.purpose.id_for_label }}">Purpose</label>
+                {{ transaction_form.purpose }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.date.id_for_label }}">Date</label>
+                {{ transaction_form.date }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.manager.id_for_label }}">Manager</label>
+                {{ transaction_form.manager }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.admin.id_for_label }}">Admin</label>
+                {{ transaction_form.admin }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.corporatemanager.id_for_label }}">Corporate Manager</label>
+                {{ transaction_form.corporatemanager }}
+            </div>
+            
+
+          <h3>Assign Assets</h3>
+          <div id="asset-formset">
+              {{ asset_formset.management_form }}
+              {% for form in asset_formset %}
+                  <div class="asset-form">
+                      {{ form.as_p }}
+                  </div>
+              {% endfor %}
+          </div>
+
+          <button class="btn btn-primary" type="button" id="add-asset">Add Another Asset</button>
+          <button class="btn btn-success" type="submit">Save Assignment</button>
+        </form>
+      </div>
+    </section>
+    <!-- /.content -->
+  </div>
+  <script>
+    document.getElementById('add-asset').addEventListener('click', function() {
+      let formsetDiv = document.getElementById('asset-formset');
+      let totalForms = document.getElementById("id_assets-TOTAL_FORMS");
+      let formCount = parseInt(totalForms.value);
+      let lastForm = formsetDiv.lastElementChild.cloneNode(true);  // Clone last form
+  
+      lastForm.querySelectorAll("input, select, textarea").forEach(function(input) {
+          if (input.name) {
+              input.name = input.name.replace(/-\d+-/, `-${formCount}-`);
+              input.id = input.id.replace(/-\d+-/, `-${formCount}-`);
+              input.value = '';  // Clear input values
+          }
+      });
+  
+      formsetDiv.appendChild(lastForm);
+      totalForms.value = formCount + 1;
+  });
+    </script>
+{% endblock %}
