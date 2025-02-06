@@ -30,11 +30,118 @@
 
     <!-- Main content -->
     <section class="content">
-      <div class="container-fluid">
-        <!-- Your content here -->
-        <p>This is your blank page content.</p>
+      <div class="container-fluid row">
+        <div class="col-md-4">
+          <div class="small-box bg-gradient-info">
+            <div class="inner">
+              <h3>{{ business_unit_count }}</h3>
+              <p>Businees Unit</p>
+            </div>
+            <div class="icon">
+              <i class="fa-solid fa-building"></i>
+            </div>
+            <a href="{% url 'business_unit_list' %}" class="small-box-footer">
+              More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="small-box bg-gradient-warning">
+            <div class="inner">
+              <h3>{{ department_count }}</h3>
+              <p>Department</p>
+            </div>
+            <div class="icon">
+              <i class="fa-solid fa-building-user"></i>
+            </div>
+            <a href="{% url 'department_list' %}" class="small-box-footer">
+              More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="small-box bg-gradient-danger">
+            <div class="inner">
+              <h3>{{employee_count}}</h3>
+              <p>Users</p>
+            </div>
+            <div class="icon">
+              <i class="fa-solid fa-user"></i>
+            </div>
+            <a href="{% url 'employee_list' %}" class="small-box-footer">
+              More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="small-box bg-gradient-success">
+            <div class="inner">
+              <h3>{{supplier_count}}</h3>
+              <p>Suppliers</p>
+            </div>
+            <div class="icon">  
+              <i class=" fa-solid fa-truck-field"></i>
+            </div>
+            <a href="{% url 'supplier_list' %}" class="small-box-footer">
+              More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="small-box bg-gradient-secondary">
+            <div class="inner">
+              <h3>{{asset_count}}</h3>
+              <p>Assets</p>
+            </div>
+            <div class="icon">  
+              <i class="nav-icon fa-solid fa-briefcase"></i>
+            </div>
+            <a href="{% url 'asset_list' %}" class="small-box-footer">
+              More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="small-box bg-gradient-light">
+            <div class="inner">
+              <h3>{{  assigned_asset_count }}</h3>
+              <p>Assinged Asset</p>
+            </div>
+            <div class="icon">  
+              <i class="fa-solid fa-boxes-packing"></i>
+            </div>   
+            <a href="{% url 'assigned_asset_list' %}" class="small-box-footer">
+              More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+          </div>
+        </div>
       </div>
     </section>
     <!-- /.content -->
   </div>
+  <script>
+    {% comment %} document.addEventListener("DOMContentLoaded", function() {
+      const ctx = document.getElementById('assetPieChart').getContext('2d');
+      const data = {
+          labels: ['Business Units', 'Departments', 'Asset Categories', 'Asset Models', 'Assets', 'Suppliers', 'Assigned Assets'],
+          datasets: [{
+              data: [
+                  {{ business_unit_count|default:0 }},
+                  {{ department_count|default:0 }},
+                  {{ asset_category_count|default:0 }},
+                  {{ asset_model_count|default:0 }},
+                  {{ asset_count|default:0 }},
+                  {{ supplier_count|default:0 }},
+                  {{ assigned_asset_count|default:0 }}
+              ],
+              backgroundColor: [
+                  '#227C9D', '#17C3B2', '#FFCB77', '#e6a377', '#dc3545', '#6f42c1', '#FE6D73'
+              ],
+              hoverBackgroundColor: [
+                  '#0056b3', '#218838', '#e0a800', '#138496', '#c82333', '#5a1e91', '#e8590c'
+              ]
+          }]
+      };
+    }) {% endcomment %}
+  </script>
 {% endblock %}

@@ -6,9 +6,26 @@ from .forms import *
 
 
 def dashboard(request):
-    return render(request, 'website/index.html', {})
+    business_unit_count = BusinessUnit.objects.count()
+    department_count = Department.objects.count()
+    employee_count = Employee.objects.count()
+    asset_category_count = AssetCategory.objects.count()
+    asset_model_count = AssetModel.objects.count()
+    asset_count = Asset.objects.count()
+    supplier_count = Supplier.objects.count()
+    assigned_asset_count = AssignedAsset.objects.count()
 
-
+    context = {
+        'business_unit_count': business_unit_count,
+        'department_count': department_count,
+        'employee_count': employee_count,
+        'asset_category_count': asset_category_count,
+        'asset_model_count': asset_model_count,
+        'asset_count': asset_count,
+        'supplier_count': supplier_count,
+        'assigned_asset_count': assigned_asset_count,
+    }   
+    return render(request, 'website/index.html', context)
 # Create a new BusinessUnit
 def create_business_unit(request):
     if request.method == 'POST':
@@ -278,7 +295,6 @@ def assigned_asset_create(request):
                 asset.transaction = transaction  # Link assets to transaction
                 asset.save()
             return redirect("assigned_asset_list")
-
     else:
         transaction_form = AssignedAssetTransactionForm()
         asset_formset = AssignedAssetFormSet()
@@ -301,11 +317,9 @@ def assigned_asset_update(request, pk):
                 asset.transaction = transaction
                 asset.save()
             return redirect("assigned_asset_list")
-
     else:
         transaction_form = AssignedAssetTransactionForm(instance=transaction)
         asset_formset = AssignedAssetFormSet(instance=transaction)
-
     return render(request, "website/assigned_asset_form.html", {
         "transaction_form": transaction_form,
         "asset_formset": asset_formset,
@@ -316,7 +330,6 @@ def assigned_asset_delete(request, pk):
     if request.method == "POST":
         transaction.delete()
         return redirect("assigned_asset_list")
-    
     return render(request, "website/assigned_asset_confirm_delete.html", {"transaction": transaction})
 
 def assigned_asset_detail(request, pk):
