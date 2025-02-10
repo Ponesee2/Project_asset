@@ -4,7 +4,6 @@ import time
 import random
 
 
-# from django.db import models
 
 class BusinessUnit(models.Model):
     name = models.CharField(max_length=100)
@@ -81,6 +80,20 @@ class Supplier (models.Model):
         return self.name
     
 class Asset(models.Model):
+    class StatusChoices(models.TextChoices):
+        AVAILABLE = 'Available', 'Available'
+        ASSIGNED = 'Assigned', 'Assigned'
+        MAINTENANCE = 'Maintenance', 'Maintenance'
+        DISPOSED = 'Disposed', 'Disposed'
+        LOST = 'Lost', 'Lost'
+        STOLEN = 'Stolen', 'Stolen'
+
+    status = models.CharField(
+        max_length=20,
+        choices=StatusChoices.choices,
+        default=StatusChoices.AVAILABLE
+    )
+    
     asset_category = models.ForeignKey(
         AssetCategory, 
         related_name='asset',  # More intuitive related name
@@ -114,6 +127,7 @@ class Asset(models.Model):
 
     warranty_end_date = models.DateField(blank=True, null=True)
     date = models.DateTimeField(default=now, blank=True, null=True)
+    is_archived = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -197,10 +211,26 @@ class AssignedAssetTransaction(models.Model):
     def __str__(self):
         return f"Transaction {self.transaction_id} for {self.employee}"
     
+# class AssignedAsset(models.Model):
+#     transaction = models.ForeignKey(AssignedAssetTransaction, related_name="assets", on_delete=models.CASCADE)
+#     asset = models.ForeignKey(Asset, related_name='assigned_assets', on_delete=models.PROTECT)
+#     quantity = models.IntegerField(default=1)
+
+#     def __str__(self):
+#         return f"{self.quantity} x {self.asset} (Transaction {self.transaction.transaction_id})"
+
 class AssignedAsset(models.Model):
     transaction = models.ForeignKey(AssignedAssetTransaction, related_name="assets", on_delete=models.CASCADE)
     asset = models.ForeignKey(Asset, related_name='assigned_assets', on_delete=models.PROTECT)
     quantity = models.IntegerField(default=1)
+
+    def save(self, *args, **kwargs):
+        """Automatically update asset status when assigned."""
+        if self.asset.status != Asset.StatusChoices.ASSIGNED:
+            self.asset.status = Asset.StatusChoices.ASSIGNED
+            self.asset.save()
+            self.asset.is_archived = True 
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.quantity} x {self.asset} (Transaction {self.transaction.transaction_id})"

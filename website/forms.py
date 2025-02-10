@@ -153,7 +153,7 @@ class SupplierForm (forms.ModelForm):
 class AssetForm (forms.ModelForm):
     class Meta:
         model = Asset
-        fields = ['asset_category', 'asset_model', 'asset_tag', 
+        fields = ['asset_category', 'asset_model', 'asset_tag', 'status',
                   'name', 'description', 'serial_number', 'image', 
                   'purchased_date', 'purchased_cost','quantity', 'supplier', 
                   'warranty_end_date', 'date']
@@ -169,6 +169,10 @@ class AssetForm (forms.ModelForm):
             'asset_tag': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Input Asset Tag'
+            }),
+            'status': forms.Select(attrs={
+                'class': 'form-control',
+                'placeholder': 'Select Status'
             }),
             'name': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -310,12 +314,33 @@ class AssignedAssetTransactionForm(forms.ModelForm):
             'corporatemanager': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
+# AssignedAssetFormSet = inlineformset_factory(
+#     AssignedAssetTransaction, AssignedAsset,
+#     fields=['asset', 'quantity'],
+#     extra=1,  # One empty form to start with
+#     widgets={
+#         'asset': forms.Select(attrs={'class': 'form-control'}),
+#         'quantity': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
+#     }
+# )
+
+class AssignedAssetForm(forms.ModelForm):
+    class Meta:
+        model = AssignedAsset
+        fields = ['asset', 'quantity']
+        widgets = {
+            'asset': forms.Select(attrs={'class': 'form-control'}),
+            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Only show assets that are available and not archived
+        self.fields['asset'].queryset = Asset.objects.filter(status='Available', is_archived=False)
+
 AssignedAssetFormSet = inlineformset_factory(
     AssignedAssetTransaction, AssignedAsset,
+    form=AssignedAssetForm,
     fields=['asset', 'quantity'],
-    extra=1,  # One empty form to start with
-    widgets={
-        'asset': forms.Select(attrs={'class': 'form-control'}),
-        'quantity': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
-    }
+    extra=1
 )

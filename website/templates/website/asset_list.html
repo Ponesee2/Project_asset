@@ -38,6 +38,7 @@
                     <th>Name</th>
                     <th>Category</th>
                     <th>Model</th>
+                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -47,8 +48,9 @@
                     <td>{{ forloop.counter }}</td>
                     <td>{{ asset.asset_tag }}</td>
                     <td>{{ asset.name }}</td>
-                    <td>{{ asset.asset_category.name }}</td>
+                    <td>{{ asset.asset_category.name }}</td>               
                     <td>{{ asset.asset_model.model }}</td>
+                    <td>{{ asset.status }}</td>
                     <td>
                         <a href="{% url 'asset_edit' asset.pk %}" class="btn btn-warning">Edit</a>
                         <a class="btn btn-danger" href="{% url 'asset_delete' asset.pk %}">Delete</a>

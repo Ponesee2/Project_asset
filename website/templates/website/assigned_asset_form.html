@@ -85,12 +85,12 @@
 
           <h3>Assign Assets</h3>
           <div id="asset-formset">
-              {{ asset_formset.management_form }}
-              {% for form in asset_formset %}
-                  <div class="asset-form">
-                      {{ form.as_p }}
-                  </div>
-              {% endfor %}
+            {{ asset_formset.management_form }}
+            {% for form in asset_formset %}
+                <div class="asset-form">
+                    {{ form.as_p }}
+                </div>
+            {% endfor %}
           </div>
 
           <button class="btn btn-primary" type="button" id="add-asset">Add Another Asset</button>

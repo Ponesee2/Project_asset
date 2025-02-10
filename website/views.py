@@ -283,6 +283,48 @@ def assigned_asset_list(request):
     return render(request, "website/assigned_asset_list.html", {"transactions": transactions})
 
 
+# def assigned_asset_create(request):
+#     if request.method == "POST":
+#         transaction_form = AssignedAssetTransactionForm(request.POST)
+#         asset_formset = AssignedAssetFormSet(request.POST)
+
+#         if transaction_form.is_valid() and asset_formset.is_valid():
+#             transaction = transaction_form.save()  # Save transaction first
+#             asset_instances = asset_formset.save(commit=False)
+#             for asset in asset_instances:
+#                 asset.transaction = transaction  # Link assets to transaction
+#                 asset.save()
+#             return redirect("assigned_asset_list")
+#     else:
+#         transaction_form = AssignedAssetTransactionForm()
+#         asset_formset = AssignedAssetFormSet()
+
+#     return render(request, "website/assigned_asset_form.html", {
+#         "transaction_form": transaction_form,
+#         "asset_formset": asset_formset
+#     })
+
+# def assigned_asset_update(request, pk):
+#     transaction = get_object_or_404(AssignedAssetTransaction, pk=pk)
+#     if request.method == "POST":
+#         transaction_form = AssignedAssetTransactionForm(request.POST, instance=transaction)
+#         asset_formset = AssignedAssetFormSet(request.POST, instance=transaction)
+
+#         if transaction_form.is_valid() and asset_formset.is_valid():
+#             transaction = transaction_form.save()
+#             asset_instances = asset_formset.save(commit=False)
+#             for asset in asset_instances:
+#                 asset.transaction = transaction
+#                 asset.save()
+#             return redirect("assigned_asset_list")
+#     else:
+#         transaction_form = AssignedAssetTransactionForm(instance=transaction)
+#         asset_formset = AssignedAssetFormSet(instance=transaction)
+#     return render(request, "website/assigned_asset_form.html", {
+#         "transaction_form": transaction_form,
+#         "asset_formset": asset_formset,
+#     })
+
 def assigned_asset_create(request):
     if request.method == "POST":
         transaction_form = AssignedAssetTransactionForm(request.POST)
@@ -291,13 +333,22 @@ def assigned_asset_create(request):
         if transaction_form.is_valid() and asset_formset.is_valid():
             transaction = transaction_form.save()  # Save transaction first
             asset_instances = asset_formset.save(commit=False)
-            for asset in asset_instances:
-                asset.transaction = transaction  # Link assets to transaction
-                asset.save()
+
+            for assigned_asset in asset_instances:
+                if assigned_asset.asset.status == 'Available':
+                    assigned_asset.transaction = transaction
+                    assigned_asset.asset.status = 'Assigned'
+                    assigned_asset.asset.is_archived = True
+                    assigned_asset.asset.save()
+                    assigned_asset.save()
+
             return redirect("assigned_asset_list")
+    
     else:
         transaction_form = AssignedAssetTransactionForm()
-        asset_formset = AssignedAssetFormSet()
+
+        # Reinitialize the formset and apply the filtered queryset
+        asset_formset = AssignedAssetFormSet(queryset=AssignedAsset.objects.none())  # Prevents preloading of unwanted assets
 
     return render(request, "website/assigned_asset_form.html", {
         "transaction_form": transaction_form,
@@ -306,6 +357,7 @@ def assigned_asset_create(request):
 
 def assigned_asset_update(request, pk):
     transaction = get_object_or_404(AssignedAssetTransaction, pk=pk)
+
     if request.method == "POST":
         transaction_form = AssignedAssetTransactionForm(request.POST, instance=transaction)
         asset_formset = AssignedAssetFormSet(request.POST, instance=transaction)
@@ -313,17 +365,24 @@ def assigned_asset_update(request, pk):
         if transaction_form.is_valid() and asset_formset.is_valid():
             transaction = transaction_form.save()
             asset_instances = asset_formset.save(commit=False)
-            for asset in asset_instances:
-                asset.transaction = transaction
-                asset.save()
+
+            for assigned_asset in asset_instances:
+                assigned_asset.transaction = transaction
+                assigned_asset.asset.status = "Assigned"  # Update asset status
+                assigned_asset.asset.is_archived = True  # Archive the asset
+                assigned_asset.asset.save()  # Save the updated asset
+                assigned_asset.save()  # Save assigned asset record
+
             return redirect("assigned_asset_list")
     else:
         transaction_form = AssignedAssetTransactionForm(instance=transaction)
         asset_formset = AssignedAssetFormSet(instance=transaction)
+
     return render(request, "website/assigned_asset_form.html", {
         "transaction_form": transaction_form,
         "asset_formset": asset_formset,
     })
+
 
 def assigned_asset_delete(request, pk):
     transaction = get_object_or_404(AssignedAssetTransaction, pk=pk)
