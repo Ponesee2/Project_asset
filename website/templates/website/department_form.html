@@ -37,11 +37,25 @@
       
           <form method="POST">
               {% csrf_token %}
-              {{ form.as_p }}
+              <div class="d-flex flex-row w-100 col-10 text-center jusytify-content-between">
+                <div class="m-3 w-100">
+                  <label class="form-label">Name</label>
+                  {{ form.name}}
+                </div>
+                <div class="m-3 w-100">
+                  <label class="form-label" >Location</label>
+                  {{ form.location}}
+                </div>
+                <div  class="m-3 w-100">
+                  <label class="form-label" >Business Unit</label>
+                  {{ form.business_unit}}
+                </div>
+              </div>
+             <div class="m-3"> 
               <button class="btn btn-success" type="submit">Save</button>
               <a class="btn btn-secondary" href="{% url 'department_list' %}">Cancel</a>
-          </form>
-         
+             </div>
+          </form> 
       </div>
     </section>
     <!-- /.content -->

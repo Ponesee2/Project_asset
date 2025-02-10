@@ -83,8 +83,12 @@ Asset Form
             </div>
            <div class="d-flex flex-row w-100 justify-content-between">
             <div class="m-3 w-100">
-                <label for="id_quantity" class="form-label">Quantity</label>
-                {{ form.quantity }}
+                <label for="id_quantity" class="form-label">Total Asset</label>
+                {{ form.total_quantity }}
+            </div>
+            <div class="m-3 w-100 h-25">
+                <label for="id_quantity" class="form-label">Available Asset</label>
+                {{ form.available_quantity }}
             </div>
             <div class="m-3 w-100">
                 <label for="id_supplier" class="form-label">Supplier</label>

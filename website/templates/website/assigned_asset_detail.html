@@ -91,15 +91,21 @@
     .design {
         font-family: Arial, Helvetica, sans-serif;
         font-size: large;
-        margin-right: 20px;
+        margin-right: 10px;
     }
 
     .designname{
         font-family: Arial, Helvetica, sans-serif;
         font-size: large;
-        border-bottom: 2px solid black;
-        margin-left: 20px;
+        margin-left: 10px;
+        font-weight: bolder;
+        margin-bottom: 0px;
     }   
+    .officer{
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: Large;
+        font-weight: bolder;
+    }
 </style>
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -184,7 +190,7 @@
                             <td>{{ asset.asset.asset_tag }}</td>
                             <td>{{ asset.asset }}</td>
                             <td>{{ asset.asset.serial_number }}</td>
-                            <td>{{ asset.quantity }}</td>
+                            <td>{{ asset.quantity_assigned }}</td>
                             <td>{{ transaction.business_unit }}</td>
                             <td>{{ transaction.department }}</td>
                             <td>{{ transaction.business_unitto }}</td>
@@ -199,20 +205,20 @@
                 <!-- Signature Section -->
                 <div class="signature-section ">
                     <div class="signature mt-5">
-                        <p>{{ transaction.manager }}</p>
+                        <p class="officer">{{ transaction.manager }}</p>
                         <p class="name" >Dept. / Gen. Manager</p>
                     </div>
                     <div class="signature mt-5">
-                        <p>{{ transaction.admin }}</p>
+                        <p class="officer">{{ transaction.admin }}</p>
                         <p class="name" >IT Asset Administrator</p>
                     </div>
                     <div class="signature mt-5">
-                        <p>{{ transaction.corporatemanager }}</p>
+                        <p class="officer">{{ transaction.corporatemanager }}</p>
                         <p class="name" >Corporate IT Manager</p>
                     </div>
                 </div>
                 <div class="signaturedby mt-5 ">
-                    <p >{{ transaction.employee }}</p>
+                    <p class="officer">{{ transaction.employee }}</p>
                     <p class="name w-25" >Recieved by:</p>
                 </div>
  

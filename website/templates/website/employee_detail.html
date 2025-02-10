@@ -2,8 +2,15 @@
 {% block title %}
     Employee Detail
 {% endblock %}
-
 {% block content %}
+<style>
+    .para {
+        font-size: 20px;
+        font-weight: bold;
+        font-family: Arial, sans-serif;
+        color: grey;
+    }
+</style>
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -22,13 +29,47 @@
             <section class="content">
                 <div class="container-fluid">
                     <h1>{{ employee.first_name }} {{ employee.last_name }}</h1>
-                    <p>Email: {{ employee.email }}</p>
-                    <p>Department: {{ employee.department.name }}</p>
+                    <p class="para">Email: {{ employee.email }}</p>
+                    <p class="para">Department: {{ employee.business_unit.name }}</p>
+                    <p class="para">Department: {{ employee.department.name }}</p>
                     <div class="d-flex flex-row">
                         <a class="btn btn-primary me-2" href="{% url 'update_employee' employee.pk %}">Edit</a>
                         <a class="btn btn-danger me-2" href="{% url 'delete_employee' employee.pk %}">Delete</a>
                         <a class="btn btn-secondary me-2" href="{% url 'employee_list' %}">Back to list</a>
                     </div>
+                </div>
+                <div class="continer-fluid mt-5">
+                    <h2>Assigned Assets</h2> 
+                    <table class="table table-striped table-hover table-bordered" data-search="true" data-pagination="true">
+                        <thead>
+                            <tr>
+                                <th>Asset Tag</th>
+                                <th>Asset Name</th>
+                                <th>Serial Number</th>
+                                <th>Quantity Assigned</th>
+                                <th>Transaction ID</th>
+                                <th>Business Unit From</th>
+                                <th>Department From</th>
+                                <th>Business Unit To</th>
+                                <th>Department To</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for assigned_asset in assigned_assets %}
+                            <tr>
+                                <td>{{ assigned_asset.asset.asset_tag }}</td>
+                                <td>{{ assigned_asset.asset.name }}</td>
+                                <td>{{ assigned_asset.asset.serial_number }}</td>
+                                <td>{{ assigned_asset.quantity_assigned }}</td>
+                                <td>{{ assigned_asset.transaction.transaction_id }}</td>
+                                <td>{{ assigned_asset.transaction.business_unit.name }}</td>
+                                <td>{{ assigned_asset.transaction.department.name }}</td>
+                                <td>{{ assigned_asset.transaction.business_unitto.name }}</td>
+                                <td>{{ assigned_asset.transaction.departmentto.name }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </section>
         </div>

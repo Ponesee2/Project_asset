@@ -34,7 +34,7 @@ Assigned Assets
         <a href="{% url 'assigned_asset_create' %}" class="btn btn-success mb-3">Assign New Asset</a>
 
         <div class="table-responsive">
-          <table class="table table-bordered table-striped">
+          <table id="businesstable" class="table table-striped table-hover table-bordered" data-search="true" data-pagination="true">
             <thead class="thead-dark">
               <tr>
                 <th>Transaction ID</th>
@@ -71,4 +71,41 @@ Assigned Assets
     </section>
     <!-- /.content -->
   </div>
+  <script>
+    $(document).ready(function() {
+        var table = $('#businesstable').DataTable({
+            responsive: true,
+            autoWidth: false,
+            searching: true,
+            ordering: true,
+            select: {
+                style: 'multi' // Enable multi-select
+            },
+            columnDefs: [
+                { targets: [0, 1, 2], searchable: true }, // Enable search for specific columns
+                { targets: [3], orderable: false } // Disable sorting for actions column
+            ],
+            initComplete: function () {
+                var business_unit = $('#business_unit');
+        
+                // Populate Academic Term Filter Dropdown (Column 3)
+                this.api().columns(2).every(function () {
+                    var column = this;
+                    column.data().unique().sort().each(function (d, j) {
+                        if (!$(`#business_unit option[value="${d}"]`).length) {
+                            business_unit.append('<option value="' + d + '">' + d + '</option>');
+                        }
+                    });
+                });
+            }
+        });
+
+        // Filter by Course Subject
+        $('#business_unit').on('change', function() {
+            var location = $(this).val();
+            table.column(2).search(location ? '^' + location + '$' : '', true, false).draw();
+        });
+    });
+
+  </script>
 {% endblock %}

@@ -48,19 +48,21 @@
             <table id="businesstable" class="table table-striped table-hover table-bordered" data-search="true" data-pagination="true">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Shortname</th>
-                        <th>Location</th>
-                        <th>Actions</th>
+                        <th class="text-center">Name</th>
+                        <th class="text-center">Shortname</th>
+                        <th class="text-center">Location</th>
+                        <th class="text-center">Assigned Asset</th>
+                        <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for business_unit in business_units %}
                     <tr>
-                        <td>{{ business_unit.name }}</td>
-                        <td>{{ business_unit.shortname }}</td>
-                        <td>{{ business_unit.location }}</td>
-                        <td>
+                        <td class="text-center">{{ business_unit.name }}</td>
+                        <td class="text-center">{{ business_unit.shortname }}</td>
+                        <td class="text-center">{{ business_unit.location }}</td>
+                        <td class="text-center">{{ business_unit.total_assigned_assets|default:0 }}</td>
+                        <td class="text-center">
                             <a class="btn btn-primary" href="{% url 'update_business_unit' business_unit.pk %}">Edit</a>
                             <a class="btn btn-danger" href="{% url 'delete_business_unit' business_unit.pk %}">Delete</a>
                         </td>

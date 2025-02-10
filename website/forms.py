@@ -155,8 +155,8 @@ class AssetForm (forms.ModelForm):
         model = Asset
         fields = ['asset_category', 'asset_model', 'asset_tag', 'status',
                   'name', 'description', 'serial_number', 'image', 
-                  'purchased_date', 'purchased_cost','quantity', 'supplier', 
-                  'warranty_end_date', 'date']
+                  'purchased_date', 'purchased_cost', 'supplier', 
+                  'warranty_end_date', 'date', 'total_quantity', 'available_quantity']
         widgets = {
             'asset_category': forms.Select(attrs={
                 'class': 'form-control',
@@ -178,6 +178,14 @@ class AssetForm (forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Input Asset Name'
             }),
+            'total_quantity': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Input Total Quantity'
+            }),
+            'available_quantity': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Input Available Quantity'
+            }),
             'description': forms.Textarea(attrs={
                 'class': 'form-control',
                 'placeholder': 'Input Description'
@@ -198,10 +206,6 @@ class AssetForm (forms.ModelForm):
             'purchased_cost': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Enter Purchased Cost'
-            }),
-            'quantity': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter Quantity'
             }),
             'supplier': forms.Select(attrs={
                 'class': 'form-control',
@@ -323,24 +327,29 @@ class AssignedAssetTransactionForm(forms.ModelForm):
 #         'quantity': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
 #     }
 # )
-
 class AssignedAssetForm(forms.ModelForm):
     class Meta:
         model = AssignedAsset
-        fields = ['asset', 'quantity']
+        fields = ['asset', 'quantity_assigned']
         widgets = {
             'asset': forms.Select(attrs={'class': 'form-control'}),
-            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
+            'quantity_assigned': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Only show assets that are available and not archived
-        self.fields['asset'].queryset = Asset.objects.filter(status='Available', is_archived=False)
+        # Filter to show only assets that are available and not archived
+        self.fields['asset'].queryset = Asset.objects.filter(available_quantity__gt=0, is_archived=False)
+
+    def clean_quantity_assigned(self):
+        quantity_assigned = self.cleaned_data.get('quantity_assigned')
+        asset = self.cleaned_data.get('asset')
+        if asset and quantity_assigned > asset.available_quantity:
+            raise forms.ValidationError(f"Cannot assign {quantity_assigned} units. Only {asset.available_quantity} units available.")
+        return quantity_assigned
 
 AssignedAssetFormSet = inlineformset_factory(
     AssignedAssetTransaction, AssignedAsset,
     form=AssignedAssetForm,
-    fields=['asset', 'quantity'],
     extra=1
 )

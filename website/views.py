@@ -1,6 +1,7 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
+from django.db.models import Sum
 from .models import *
 from .forms import *
 
@@ -14,7 +15,8 @@ def dashboard(request):
     asset_count = Asset.objects.count()
     supplier_count = Supplier.objects.count()
     assigned_asset_count = AssignedAsset.objects.count()
-
+    business_units = BusinessUnit.objects.annotate(
+    total_assigned_assets=Sum('transactions_from__assets__quantity_assigned'))
     context = {
         'business_unit_count': business_unit_count,
         'department_count': department_count,
@@ -24,6 +26,7 @@ def dashboard(request):
         'asset_count': asset_count,
         'supplier_count': supplier_count,
         'assigned_asset_count': assigned_asset_count,
+        'business_units': business_units
     }   
     return render(request, 'website/index.html', context)
 # Create a new BusinessUnit
@@ -39,7 +42,8 @@ def create_business_unit(request):
 
 # List all BusinessUnits
 def business_unit_list(request):
-    business_units = BusinessUnit.objects.all()
+    business_units = BusinessUnit.objects.annotate(
+    total_assigned_assets=Sum('transactions_from__assets__quantity_assigned'))
     return render(request, 'website/business_unit_list.html', {'business_units': business_units})
 
 # Update a BusinessUnit
@@ -130,9 +134,17 @@ def delete_employee(request, pk):
         return redirect('employee_list')
     return render(request, 'website/employee_confirm_delete.html', {'employee': employee})
 
+# def employee_detail(request, pk):
+#     employee = get_object_or_404(Employee, pk=pk)
+#     return render(request, 'website/employee_detail.html', {'employee': employee})
+
 def employee_detail(request, pk):
     employee = get_object_or_404(Employee, pk=pk)
-    return render(request, 'website/employee_detail.html', {'employee': employee})
+    assigned_assets = AssignedAsset.objects.filter(transaction__employee=employee)
+    return render(request, 'website/employee_detail.html', {
+        'employee': employee,
+        'assigned_assets': assigned_assets
+    })
 
 def asset_category_create(request):
     if request.method == 'POST':
@@ -331,24 +343,27 @@ def assigned_asset_create(request):
         asset_formset = AssignedAssetFormSet(request.POST)
 
         if transaction_form.is_valid() and asset_formset.is_valid():
-            transaction = transaction_form.save()  # Save transaction first
+            transaction = transaction_form.save()
             asset_instances = asset_formset.save(commit=False)
 
             for assigned_asset in asset_instances:
-                if assigned_asset.asset.status == 'Available':
+                asset = assigned_asset.asset
+                if assigned_asset.quantity_assigned <= asset.available_quantity:
                     assigned_asset.transaction = transaction
-                    assigned_asset.asset.status = 'Assigned'
-                    assigned_asset.asset.is_archived = True
-                    assigned_asset.asset.save()
+                    asset.available_quantity -= assigned_asset.quantity_assigned
+                    if asset.available_quantity == 0:
+                        asset.is_archived = True  # Optionally archive the asset
+                    asset.save()
                     assigned_asset.save()
+                else:
+                    # Handle the case where assigned quantity exceeds available quantity
+                    # This should be caught by form validation, but included here for safety
+                    pass
 
             return redirect("assigned_asset_list")
-    
     else:
         transaction_form = AssignedAssetTransactionForm()
-
-        # Reinitialize the formset and apply the filtered queryset
-        asset_formset = AssignedAssetFormSet(queryset=AssignedAsset.objects.none())  # Prevents preloading of unwanted assets
+        asset_formset = AssignedAssetFormSet()
 
     return render(request, "website/assigned_asset_form.html", {
         "transaction_form": transaction_form,

@@ -35,19 +35,19 @@
             <table id="businesstable" class="table table-striped table-hover table-bordered" data-search="true" data-pagination="true">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Shortname</th>
-                        <th>Location</th>
-                        <th>Actions</th>
+                        <th class="text-center" >Name</th>
+                        <th class="text-center">Shortname</th>
+                        <th class="text-center">Location</th>
+                        <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for department in departments %}
                     <tr>
-                        <td>{{ department.name }}</td>
-                        <td>{{ department.location }}</td>
-                        <td>{{ department.business_unit }}</td>
-                        <td>
+                        <td class="text-center">{{ department.name }}</td>
+                        <td class="text-center">{{ department.location }}</td>
+                        <td class="text-center">{{ department.business_unit }}</td>
+                        <td class="text-center">
                             <a class="btn btn-info" href="{% url 'department_detail' department.pk %}">
                                 Edit
                             </a>

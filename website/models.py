@@ -115,7 +115,8 @@ class Asset(models.Model):
     image= models.ImageField(blank=True, null=True)
     purchased_date = models.DateField(blank=True, null=True)
     purchased_cost = models.IntegerField(blank=True, null=True)
-    quantity = models.IntegerField(blank=True, null=True)
+    total_quantity = models.PositiveIntegerField(default=0)
+    available_quantity = models.PositiveIntegerField(default=0)
 
     supplier = models.ForeignKey(
         Supplier, 
@@ -220,9 +221,10 @@ class AssignedAssetTransaction(models.Model):
 #         return f"{self.quantity} x {self.asset} (Transaction {self.transaction.transaction_id})"
 
 class AssignedAsset(models.Model):
-    transaction = models.ForeignKey(AssignedAssetTransaction, related_name="assets", on_delete=models.CASCADE)
+    transaction = models.ForeignKey(AssignedAssetTransaction, related_name="assets", on_delete=models.PROTECT)
     asset = models.ForeignKey(Asset, related_name='assigned_assets', on_delete=models.PROTECT)
-    quantity = models.IntegerField(default=1)
+    quantity_assigned = models.PositiveIntegerField(default=1)
+
 
     def save(self, *args, **kwargs):
         """Automatically update asset status when assigned."""
@@ -233,4 +235,4 @@ class AssignedAsset(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.quantity} x {self.asset} (Transaction {self.transaction.transaction_id})"
+        return f"{self.quantity_assigned} x {self.asset} (Transaction {self.transaction.transaction_id})"

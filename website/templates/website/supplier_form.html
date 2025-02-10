@@ -32,9 +32,32 @@
         <h2>{% if form.instance.pk %}Update{% else %}Create{% endif %} Supplier</h2>
         <form method="post">
             {% csrf_token %}
-            {{ form.as_p }}
-            <button class="btn btn-primary mb-3" type="submit">Save</button>
-            <a class="btn btn-secondary mb-3" href="{% url 'supplier_list' %}">Back to List</a>
+            <div class="d-flex flex-row w-100 col-10 justify-content-between">
+              <div class="m-3 w-100">
+                <label for="">Name:</label>
+                {{ form.name}}
+              </div>
+            </div>
+            <div class="d-flex flex-row w-100 col-10 justify-content-between">
+              <div class="m-3 w-100">
+                <label for="">Address:</label>
+                {{ form.address}}
+              </div>
+            </div>
+            <div class="d-flex flex-row w-100 col-10  justify-content-between">
+              <div class="m-3 w-100">
+                <label for="">Contact Person:</label>
+                {{ form.contact_person}}
+              </div>
+              <div class="m-3 w-100">
+                <label for="">Contact Number:</label>
+                {{ form.contact_number}}
+              </div>
+            </div>
+            <div class="m-3">
+              <button class="btn btn-primary mb-3" type="submit">Save</button>
+              <a class="btn btn-secondary mb-3" href="{% url 'supplier_list' %}">Back to List</a>
+            </div>
         </form>
       </div>
     </section>

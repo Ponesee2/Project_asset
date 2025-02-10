@@ -116,6 +116,22 @@
           </div>
         </div>
       </div>
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th>Business Unit</th>
+              <th>Count</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for business_unit in business_units %}
+            <tr>
+              <td>{{ business_unit.name }}</td>
+              <td>{{ business_unit.total_assigned_assets|default:0 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
     </section>
     <!-- /.content -->
   </div>
@@ -123,16 +139,19 @@
     {% comment %} document.addEventListener("DOMContentLoaded", function() {
       const ctx = document.getElementById('assetPieChart').getContext('2d');
       const data = {
-          labels: ['Business Units', 'Departments', 'Asset Categories', 'Asset Models', 'Assets', 'Suppliers', 'Assigned Assets'],
+          labels: ['Business Units', 'Departments', 'Asset Categories', 'Asset Models', 'Assets', 'Suppliers', 'Assigned Assets','total_assigned_assets','business_units'],
           datasets: [{
               data: [
+                  {{ }}
                   {{ business_unit_count|default:0 }},
                   {{ department_count|default:0 }},
                   {{ asset_category_count|default:0 }},
                   {{ asset_model_count|default:0 }},
                   {{ asset_count|default:0 }},
                   {{ supplier_count|default:0 }},
-                  {{ assigned_asset_count|default:0 }}
+                  {{ assigned_asset_count|default:0 }},
+                  {{ total_assigned_assets|default:0}},
+                  {{ business_units|default:0}}
               ],
               backgroundColor: [
                   '#227C9D', '#17C3B2', '#FFCB77', '#e6a377', '#dc3545', '#6f42c1', '#FE6D73'
