@@ -42,46 +42,54 @@ class DepartmentForm(forms.ModelForm):
             }),
         }
 
+# class EmployeeForm(forms.ModelForm):
+#     class Meta:
+#         model = Employee
+#         fields = ['first_name', 'last_name', 'designation', 'username', 'email', 'business_unit', 'department']
+#         def __init__(self, *args, **kwargs):
+#             super().__init__(*args, **kwargs)
+#         # Populate the business unit and department dropdowns with all options
+#             self.fields['business_unit'].queryset = BusinessUnit.objects.all()
+#             self.fields['department'].queryset = Department.objects.all()
+
+#         widgets = {
+#             'first_name': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Enter first name'}),
+#             'last_name': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Enter last name' }),
+#             'designation': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Enter designation'}),
+#             'username': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Enter username'}),
+#             'email': forms.EmailInput(attrs={'class': 'form-control','placeholder': 'Enter email'}),
+#             'business_unit': forms.Select(attrs={'class': 'form-control','placeholder': 'Select business unit'}),
+#             'department': forms.Select(attrs={'class': 'form-control','placeholder': 'Select department'}),
+#         }
+
 class EmployeeForm(forms.ModelForm):
     class Meta:
         model = Employee
         fields = ['first_name', 'last_name', 'designation', 'username', 'email', 'business_unit', 'department']
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-        # Populate the business unit and department dropdowns with all options
-            self.fields['business_unit'].queryset = BusinessUnit.objects.all()
-            self.fields['department'].queryset = Department.objects.all()
-
         widgets = {
-            'first_name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter first name'
-            }),
-            'last_name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter last name'
-            }),
-            'designation': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter designation'
-            }),
-            'username': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter username'
-            }),
-            'email': forms.EmailInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter email'
-            }),
-            'business_unit': forms.Select(attrs={
-                'class': 'form-control',
-                'placeholder': 'Select business unit'
-            }),
-            'department': forms.Select(attrs={
-                'class': 'form-control',
-                'placeholder': 'Select department'
-            }),
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter first name'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter last name'}),
+            'designation': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter designation'}),
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter username'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter email'}),
+            'business_unit': forms.Select(attrs={'class': 'form-control', 'id': 'business_unit'}),
+            'department': forms.Select(attrs={'class': 'form-control', 'id': 'department'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        business_unit_id = kwargs.pop('business_unit_id', None)
+        super().__init__(*args, **kwargs)
+        
+        # Populate business unit dropdown
+        self.fields['business_unit'].queryset = BusinessUnit.objects.all()
+        
+        # Populate department dropdown based on business unit
+        if self.instance.pk and self.instance.business_unit:
+            self.fields['department'].queryset = Department.objects.filter(business_unit=self.instance.business_unit)
+        elif business_unit_id:
+            self.fields['department'].queryset = Department.objects.filter(business_unit_id=business_unit_id)
+        else:
+            self.fields['department'].queryset = Department.objects.none()
 
 class AssetCategoryForm (forms.ModelForm):
     class Meta:
@@ -186,7 +194,7 @@ class AssetForm (forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Input Available Quantity'
             }),
-            'description': forms.Textarea(attrs={
+            'description': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Input Description'
             }),

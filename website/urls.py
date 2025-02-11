@@ -40,4 +40,5 @@ urlpatterns = [
     path('assigned_asset/update/<int:pk>/', views.assigned_asset_update, name='assigned_asset_update'),
     path('assigned_asset/delete/<int:pk>/', views.assigned_asset_delete, name='assigned_asset_delete'),
     path('assigned_asset/detail/<int:pk>/', views.assigned_asset_detail, name='assigned_asset_detail'),
+    path('get-departments/', views.get_departments, name='get_departments'),
 ]

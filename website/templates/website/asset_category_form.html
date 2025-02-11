@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 <title>
     {% if form.instance.pk %}Update{% else %}Create{% endif %} Asset Category
 </title>
@@ -36,9 +37,20 @@
         <!-- Your content here -->
             <form method="post">
                 {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-primary">Save</button>
-                <a class="btn btn-secondary" href="{% url 'asset_category_list' %}">Back to List</a>
+                <div class="d-flex flex-row w-100 col-10 justify-content-between">
+                  <div class="m-3 w-100">
+                    <label for="">Name:</label>
+                    {{ form.name}}
+                  </div>
+                  <div class="m-3 w-100">
+                    <label for="">Sub-category Name:</label>
+                    {{ form.sub_category}}
+                  </div>
+                </div>
+                <div class="m-3">
+                  <button type="submit" class="btn btn-primary">Save</button>
+                  <a class="btn btn-secondary" href="{% url 'asset_category_list' %}">Back to List</a>
+                </div>
             </form>  
       </div>
     </section>

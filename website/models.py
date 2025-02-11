@@ -17,8 +17,8 @@ class Department(models.Model):
     location = models.CharField(max_length=100)
     business_unit = models.ForeignKey(
         BusinessUnit, 
-        on_delete=models.PROTECT,       # if BusinessUnit is deleted, also delete Departments
-        related_name='departments'      # allows reverse lookup: some_bu.departments.all()
+        on_delete=models.PROTECT,     
+        related_name='departments'     
     )
 
     def __str__(self):
@@ -110,7 +110,7 @@ class Asset(models.Model):
     )
     asset_tag = models.CharField(max_length=100, blank=True, null=True)
     name = models.CharField(max_length=100, blank=True, null=True)
-    description = models.TextField(max_length=500, blank=True, null=True)
+    description = models.CharField(max_length=100, blank=True, null=True)
     serial_number = models.CharField(max_length=100, blank=True, null=True)
     image= models.ImageField(blank=True, null=True)
     purchased_date = models.DateField(blank=True, null=True)

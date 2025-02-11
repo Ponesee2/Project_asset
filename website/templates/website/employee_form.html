@@ -1,4 +1,5 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
   Employee Form
@@ -48,11 +49,11 @@
                             {{ form.email }}
                         </div>
                         <div class="form-group w-100 m-3">
-                            <label for="employee_name" class="form-label">business_unit</label>
+                            <label id="id_business_unit" for="employee_name" class="form-label">business_unit</label>
                             {{ form.business_unit }}
                         </div>
                         <div class="form-group w-100 m-3">
-                            <label for="employee_name" class="form-label">Department</label>
+                            <label id="id_department" for="employee_name" class="form-label">Department</label>
                             {{ form.department }}
                         </div>
                     </div>
@@ -64,4 +65,24 @@
                 </div>
             </section>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#business_unit").change(function () {
+                var businessUnitId = $(this).val();
+                $.ajax({
+                    url: "{% url 'get_departments' %}",
+                    data: {business_unit_id: businessUnitId},
+                    success: function (data) {
+                        var departmentDropdown = $("#department");
+                        departmentDropdown.empty();
+                        departmentDropdown.append('<option value="">Select department</option>');
+                        $.each(data, function (index, department) {
+                            departmentDropdown.append('<option value="' + department.id + '">' + department.name + '</option>');
+                        });
+                    }
+                });
+            });
+        });
+    </script>    
 {% endblock %}

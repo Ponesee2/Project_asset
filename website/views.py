@@ -102,14 +102,26 @@ def department_detail(request, pk):
     department = get_object_or_404(Department, pk=pk)
     return render(request, 'website/department_detail.html', {'department': department})
 
+# def create_employee(request):
+
+#     if request.method == 'POST':
+#         form = EmployeeForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('employee_list')
+#     else:
+#         form = EmployeeForm()
+#     return render(request, 'website/employee_form.html', {'form': form})
+
 def create_employee(request):
+    business_unit_id = request.POST.get('business_unit') if request.method == 'POST' else None
     if request.method == 'POST':
-        form = EmployeeForm(request.POST)
+        form = EmployeeForm(request.POST, business_unit_id=business_unit_id)
         if form.is_valid():
             form.save()
             return redirect('employee_list')
     else:
-        form = EmployeeForm()
+        form = EmployeeForm(business_unit_id=business_unit_id)
     return render(request, 'website/employee_form.html', {'form': form})
 
 def employee_list(request):
@@ -409,3 +421,8 @@ def assigned_asset_delete(request, pk):
 def assigned_asset_detail(request, pk):
     transaction = get_object_or_404(AssignedAssetTransaction, pk=pk)
     return render(request, "website/assigned_asset_detail.html", {"transaction": transaction})
+
+def get_departments(request):
+    business_unit_id = request.GET.get('business_unit_id')
+    departments = Department.objects.filter(business_unit_id=business_unit_id).values('id', 'name')
+    return JsonResponse(list(departments), safe=False)

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -28,9 +29,30 @@
         <!-- Your content here -->
             <form method="post">
                 {% csrf_token %}
-                {{ form.as_p }}
-                <button class="btn btn-primary" type="submit">Save</button>
-                <a class="btn btn-secondary" href="{% url 'asset_model_list' %}">Back to List</a>
+                <div class="d-flex flex-row w-100 col-10 justify-content-between">
+                  <div class="m-3 w-100">
+                    <label for="">Asset Category:</label>
+                    {{ form.asset_category}}
+                  </div>
+                  <div class="m-3 w-100">
+                    <label for="">Brand:</label>
+                    {{ form.brand}}
+                  </div>
+                  <div class="m-3 w-100">
+                    <label for="">Model:</label>
+                    {{ form.model}}
+                  </div>
+                </div>
+                <div class="d-flex flex-row w-100 col-4 justify-content-between">
+                  <div class="m-3 w-75">
+                    <label for="">Year Model:</label>
+                    {{ form.year_model }}
+                  </div>
+                </div>
+                <div class="m-3">
+                  <button class="btn btn-primary" type="submit">Save</button>
+                  <a class="btn btn-secondary" href="{% url 'asset_model_list' %}">Back to List</a>
+                </div>
             </form>
       </div>
     </section>
