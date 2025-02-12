@@ -7,6 +7,14 @@
     <img src="{% static 'media/logo.jpg' %}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8" />
     <span class="brand-text font-weight-light">Asset</span>
   </a>
+    <!-- Sidebar -->
+  <div class="sidebar">
+    <!-- Sidebar user panel (optional) -->
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+      <div class="info text-center w-100">
+        <a href="#" class="d-block fw-bold fs-5">Academic Director</a>
+      </div>
+    </div>
 
     <!-- Sidebar Menu -->
     <nav class="hold-transition sidebar-mini">
@@ -14,13 +22,13 @@
         <!-- Single Link -->
         <li class="nav-item">
           <a href="{% url 'dashboard' %}" class="nav-link">
-            <i class="fa-solid fa-house"></i>
+            <i class="nav-icon fa-solid fa-house"></i>
             <p>Dashboard</p>
           </a>
         </li>
         <li class="nav-item">
           <a href="{% url 'business_unit_list' %}" class="nav-link">
-            <i class=" fa-solid fa-building"></i>
+            <i class="nav-icon fa-solid fa-building"></i>
             <p>Business Unit</p>
           </a>
         </li>

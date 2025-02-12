@@ -1,0 +1,931 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&family=Open+Sans:wght@300;400;600&display=swap');
+;
+
+/* General Styling for Dark Mode */
+.dark-mode {
+    background-color: #343a40;
+    color: #ffffff;
+}
+
+/* Navbar in Dark Mode */
+.dark-mode .navbar {
+    background-color: #484a4d;
+    color: #ffffff;
+    border-bottom: 1px solid #343a40;
+}
+
+.dark-mode .container-fluid {
+    background-color: #343a40;
+}
+
+.container-fluid {
+    background-color: #F4F6F9;
+}
+
+/* Navbar in Dark Mode */
+.dark-mode .main-footer {
+    background-color: #343a40;
+    color: #ffffff;
+    border-top: 1px solid #757575;
+}
+
+.dark-mode .navbar .dropdown-menu {
+    background-color: #343a40;
+    color: #ffffff;
+}
+
+.dark-mode .navbar .dropdown-menu .dropdown-item {
+    color: #ffffff;
+}
+
+.dark-mode .navbar .dropdown-menu .dropdown-item:hover {
+    background-color: #454d55;
+    color: #ffffff;
+}
+
+.dark-mode .navbar .dropdown-menu .dropdown-item .fa-fw {
+    color: #ffffff;
+}
+
+/* Sidebar in Dark Mode */
+.dark-mode .main-sidebar {
+    background-color: #343a40;
+    color: #ffffff;
+}
+
+.dark-mode .sidebar a {
+    color: #ffffff;
+}
+
+
+.dark-mode .custom-sidebar .nav-link p {
+    color: #ffffff;
+    /* Text color */
+}
+
+.dark-mode .custom-sidebar .nav-link.active p {
+    color: #ffffff;
+    /* Text color */
+    font-weight: 500;
+}
+
+.dark-mode .custom-sidebar .nav-link i {
+    color: #ffffff;
+    /* Text color */
+}
+
+.dark-mode .custom-sidebar .nav-link.active i {
+    color: #ffffff;
+    /* Text color */
+    font-weight: 500;
+}
+
+.dark-mode .custom-sidebar .brand-link {
+    background-color: #343a40;
+    color: #ffffff;
+    border-color: #757575;
+}
+
+.dark-mode .custom-sidebar .user-panel {
+    background-color: #343a40;
+    color: #ffffff;
+    border-color: #757575;
+}
+
+/* Remove border from the input field */
+.form-control-sidebar {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Optional: Remove border from the search button as well */
+.btn-sidebar {
+    border: 1px solid #8AA17C;
+    box-shadow: none !important;
+}
+
+/* Optional: Remove border from the search button as well */
+.btn-sidebar {
+    border: 1px solid #8AA17C !important;
+    box-shadow: none !important;
+}
+
+/* Circular Gradient similar to the provided design */
+.dark-mode .content-wrapper {
+    background-color: #343a40;
+    color: #ffffff;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+/* Cards in Dark Mode */
+.dark-mode .card {
+    background-color: #454d55;
+    color: #ffffff;
+}
+
+
+/* Cards in Dark Mode */
+.dark-mode .card-pie {
+    background-color: #F4F6F9;
+    color: #ffffff;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+/* Cards in Dark Mode */
+.dark-mode .card-bar1 {
+    background-color: #F4F6F9;
+    color: #ffffff;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+/* Cards in Dark Mode */
+.dark-mode .card-bar2 {
+    background-color: #F4F6F9;
+    color: #ffffff;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.dark-mode .card-footer {
+    background-color: #454d55;
+    color: #ffffff;
+}
+
+.dark-mode .card-header {
+    background-color: #454d55;
+    color: #ffffff;
+}
+
+/* Tables in Dark Mode */
+.dark-mode .table {
+    background-color: #454d55;
+    color: #ffffff;
+}
+
+.dark-mode .table th,
+.dark-mode .table td {
+    border-color: #555e69;
+    color: #ffffff;
+}
+
+/* Text in Dark Mode */
+.dark-mode p,
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3,
+.dark-mode h4,
+.dark-mode h5,
+.dark-mode h6,
+.dark-mode .text-gray-800,
+.dark-mode .text-gray-700,
+.dark-mode .text-gray-600,
+.dark-mode .text-gray-500,
+.dark-mode .text-gray-400 {
+    color: #ffffff !important;
+}
+
+/* Modals in Dark Mode */
+.dark-mode .modal-content {
+    background-color: #343a40;
+    color: #ffffff;
+}
+
+.dark-mode .modal-header,
+.dark-mode .modal-body,
+.dark-mode .modal-footer {
+    background-color: #343a40;
+    color: #ffffff;
+}
+
+.dark-mode .modal-header .close {
+    color: #ffffff;
+}
+
+/* Custom Modal in Dark Mode */
+.dark-mode .custom-modal {
+    background-color: #343a40;
+    color: #ffffff;
+}
+
+.dark-mode .custom-modal-header {
+    background-color: #454d55;
+    color: #ffffff;
+}
+
+.dark-mode .custom-modal-body {
+    background-color: #343a40;
+    color: #ffffff;
+}
+
+/* Form Controls in Dark Mode */
+.dark-mode .custom-modal .form-control {
+    background-color: #454d55;
+    color: #ffffff;
+}
+
+.dark-mode .custom-modal .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+/* Button Colors in Dark Mode */
+.dark-mode .custom-modal .close-btn {
+    color: #ffffff;
+}
+
+.dark-mode #content {
+    background-color: #343a40;
+    color: #ffffff;
+}
+
+.dark-mode .sticky-footer a {
+    color: #7473DF;
+}
+
+
+/* Small Text */
+.text-sm {
+    font-size: 0.875rem !important;
+}
+
+.text-sm .navbar,
+.text-sm .brand-link,
+.text-sm .nav-sidebar {
+    font-size: 0.875rem !important;
+}
+
+/* Apply Poppins to headings and important elements */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.navbar-brand,
+.card-header,
+.btn {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    /* Moderate boldness */
+    color: #555555;
+}
+
+:root {
+    --primary: #75adee;
+    /* Modern vibrant blue */
+    --primary-hover: #357ABD;
+    /* Slightly darker blue for hover */
+    --secondary: #747476;
+    /* Sophisticated muted gray */
+    --secondary-hover: #5D6D6E;
+    /* Darker shade for hover */
+    --success: #A1C099;
+    /* Fresh, energetic green */
+    --success-hover: #89AD80;
+    /* Darker green for hover */
+    --info: #B899C0;
+    /* Calm teal */
+    --info-hover: #A788AF;
+    /* Deeper teal for hover */
+    --warning: #FDD095;
+    /* Bright, engaging orange */
+    --warning-hover: #E7B572;
+    /* Warmer orange for hover */
+    --danger: #C09999;
+    /* Bold, striking red */
+    --danger-hover: #AF8585;
+    /* Darker red for hover */
+    --primary-text: #205b9e;
+    /* Modern dark blue for text */
+    --success-text: #357623;
+    /* Modern dark blue for text */
+    --secondary-text: #E0E0E0;
+    /* Modern dark blue for text */
+    --warning-text: #C26E02;
+    /* Modern dark blue for text */
+    --info-text: #683C73;
+    /* Modern dark blue for text */
+    --danger-text: #7B3737;
+    /* Modern dark blue for text */
+    --light-text: #ECF0F1;
+    /* Soft light gray for contrast */
+}
+
+.page-link {
+    background-color: var(--success) !important;
+    border-color: var(--secondary) !important;
+}
+
+/* Dark Mode Background Colors (Primary, Success, Warning, etc.) */
+.dark-mode .bg-primary {
+    background-color: var(--primary) !important;
+    color: var(--primary-text) !important;
+}
+
+.dark-mode .bg-success {
+    background-color: var(--success) !important;
+    color: var(--success-text) !important;
+}
+
+.dark-mode .bg-warning {
+    background-color: var(--warning) !important;
+    color: var(--warning-text) !important;
+}
+
+.dark-mode .bg-danger {
+    background-color: var(--danger) !important;
+    color: var(--danger-text) !important;
+}
+
+.dark-mode .bg-info {
+    background-color: var(--info) !important;
+    color: var(--info-text) !important;
+}
+
+/* Hover Effects for Background Colors in Dark Mode */
+.dark-mode .bg-primary:hover {
+    background-color: var(--primary-hover) !important;
+    color: var(--primary-text) !important;
+}
+
+.dark-mode .bg-success:hover {
+    background-color: var(--success-hover) !important;
+    color: var(--primary-text) !important;
+}
+
+.dark-mode .bg-warning:hover {
+    background-color: var(--warning-hover) !important;
+    color: var(--primary-text) !important;
+}
+
+.dark-mode .bg-danger:hover {
+    background-color: var(--danger-hover) !important;
+    color: var(--primary-text) !important;
+}
+
+.dark-mode .bg-info:hover {
+    background-color: var(--info-hover) !important;
+    color: var(--primary-text) !important;
+}
+
+/* Button Styling */
+.btn-primary {
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+    color: var(--primary-text) !important;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-secondary {
+    background-color: var(--secondary) !important;
+    border-color: var(--secondary) !important;
+    color: var(--secondary-text) !important;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-success {
+    background-color: var(--success) !important;
+    border-color: var(--success) !important;
+    color: var(--success-text) !important;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-info {
+    background-color: var(--info) !important;
+    border-color: var(--info) !important;
+    color: var(--info-text) !important;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-warning {
+    background-color: var(--warning) !important;
+    border-color: var(--warning) !important;
+    color: var(--warning-text) !important;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-danger {
+    background-color: var(--danger) !important;
+    border-color: var(--danger) !important;
+    color: var(--danger-text) !important;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Button Hover Effects */
+.btn-primary:hover {
+    background-color: var(--primary-hover) !important;
+    border-color: var(--primary-hover) !important;
+}
+
+.btn-secondary:hover {
+    background-color: var(--secondary-hover) !important;
+    border-color: var(--secondary-hover) !important;
+}
+
+.btn-success:hover {
+    background-color: var(--success-hover) !important;
+    border-color: var(--success-hover) !important;
+}
+
+.btn-info:hover {
+    background-color: var(--info-hover) !important;
+    border-color: var(--info-hover) !important;
+}
+
+.btn-warning:hover {
+    background-color: var(--warning-hover) !important;
+    border-color: var(--warning-hover) !important;
+}
+
+.btn-danger:hover {
+    background-color: var(--danger-hover) !important;
+    border-color: var(--danger-hover) !important;
+}
+
+/* Alerts in Dark Mode */
+.dark-mode .alert-primary {
+    background-color: var(--primary) !important;
+    color: var(--primary-text) !important;
+}
+
+.dark-mode .alert-success {
+    background-color: var(--success) !important;
+    color: var(--primary-text) !important;
+}
+
+.dark-mode .alert-warning {
+    background-color: var(--warning) !important;
+    color: var(--primary-text) !important;
+}
+
+.dark-mode .alert-danger {
+    background-color: var(--danger) !important;
+    color: var(--primary-text) !important;
+}
+
+.dark-mode .alert-info {
+    background-color: var(--info) !important;
+    color: var(--primary-text) !important;
+}
+
+/* Dark Mode for List Items */
+.dark-mode .list-group-item {
+    background-color: #343a40;
+    border-color: #555555;
+    color: #ffffff;
+}
+
+/* Dark Mode Button Styling */
+.dark-mode .btn-primary,
+.dark-mode .btn-secondary,
+.dark-mode .btn-success,
+.dark-mode .btn-info,
+.dark-mode .btn-warning,
+.dark-mode .btn-danger {
+    color: #ffffff;
+}
+
+.text-primary {
+    color: var(--primary-text) !important;
+    /* Default: #007bff */
+}
+
+.text-secondary {
+    color: var(--secondary-text) !important;
+    /* Default: #6c757d */
+}
+
+.text-success {
+    color: var(--success-text) !important;
+    /* Default: #28a745 */
+}
+
+.text-danger {
+    color: var(--danger-text) !important;
+    /* Default: #dc3545 */
+}
+
+.text-warning {
+    color: var(--warning-text) !important;
+    /* Default: #ffc107 */
+}
+
+.text-info {
+    color: var(--info-text) !important;
+    /* Default: #17a2b8 */
+}
+
+.text-light {
+    color: var(--light-text) !important;
+    /* Default: #f8f9fa */
+}
+
+.text-dark {
+    color: #343a40 !important;
+    /* Default: #343a40 */
+}
+
+.text-body {
+    color: #212529 !important;
+    /* Default: #212529 */
+}
+
+.text-muted {
+    color: #6c757d !important;
+    /* Default: #6c757d */
+}
+
+.text-white {
+    color: #ffffff !important;
+    /* Default: #ffffff */
+}
+
+.text-black-50 {
+    color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.text-white-50 {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.bg-primary {
+    background-color: var(--primary) !important;
+    /* Default: #007bff */
+    color: var(--light-text) !important;
+    /* Default: #007bff */
+}
+
+.bg-secondary {
+    background-color: var(--secondary) !important;
+    /* Default: #6c757d */
+    color: var(--light-text) !important;
+    /* Default: #007bff */
+}
+
+.bg-success {
+    background-color: var(--success) !important;
+    /* Default: #28a745 */
+    color: var(--success-text) !important;
+    /* Default: #007bff */
+}
+
+.bg-danger {
+    background-color: var(--danger) !important;
+    /* Default: #dc3545 */
+    color: var(--danger-text) !important;
+    /* Default: #007bff */
+}
+
+.bg-warning {
+    background-color: var(--warning) !important;
+    /* Default: #ffc107 */
+    color: var(--warning-text) !important;
+    /* Default: #007bff */
+}
+
+.bg-info {
+    background-color: var(--info) !important;
+    /* Default: #17a2b8 */
+    color: var(--info-text) !important;
+    /* Default: #007bff */
+}
+
+.bg-light {
+    background-color: var(--light-text) !important;
+    /* Default: #f8f9fa */
+}
+
+.bg-dark {
+    background-color: #343a40 !important;
+    /* Default: #343a40 */
+}
+
+.badge-primary {
+    background-color: var(--primary) !important;
+    /* Default: #007bff */
+    color: var(--light-text) !important;
+    /* Default: #007bff */
+}
+
+.badge-secondary {
+    background-color: var(--secondary) !important;
+    /* Default: #6c757d */
+    color: var(--primary) !important;
+    /* Default: #007bff */
+}
+
+.badge-success {
+    background-color: var(--success) !important;
+    /* Default: #28a745 */
+    color: var(--success-text) !important;
+    /* Default: #007bff */
+}
+
+.badge-warning {
+    background-color: var(--warning) !important;
+    /* Default: #ffc107 */
+    color: var(--warning-text) !important;
+    /* Default: #007bff */
+}
+
+.badge-info {
+    background-color: var(--info) !important;
+    /* Default: #17a2b8 */
+    color: var(--info-text) !important;
+    /* Default: #007bff */
+}
+
+
+.badge-danger {
+    background-color: var(--danger) !important;
+    /* Default: #17a2b8 */
+}
+
+.main-header.fixed-top {
+    z-index: 1030;
+    /* Ensures it stays on top of other elements */
+    background-color: white;
+    /* Add background color */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Optional: Adds a shadow for better visibility */
+}
+
+.dark-mode .main-header.fixed-top {
+    z-index: 1030;
+    /* Ensures it stays on top of other elements */
+    background-color: #484a4d;
+    color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Optional: Adds a shadow for better visibility */
+}
+
+#content-wrapper {
+    margin-top: 48px;
+    /* Adjust based on the height of your navbar */
+}
+
+/* Default Mode Styling for text_muted */
+.text-muted {
+    color: #6c757d !important;
+    /* Default muted color */
+}
+
+/* Dark Mode Styling for text_muted */
+.dark-mode .text-muted {
+    color: rgba(255, 255, 255, 0.5) !important;
+    /* Muted white in dark mode */
+}
+
+.alert-primary {
+    background-color: var(--primary);
+    color: var(--primary-text);
+    border: 1px solid var(--primary-hover);
+}
+
+.alert-success {
+    background-color: var(--success);
+    color: var(--success-text);
+    border: 1px solid var(--success-hover);
+}
+
+.alert-info {
+    background-color: var(--info);
+    color: var(--info-text);
+    border: 1px solid var(--info-hover);
+}
+
+.alert-warning {
+    background-color: var(--warning);
+    color: var(--warning-text);
+    border: 1px solid var(--warning-hover);
+}
+
+.alert-danger {
+    background-color: var(--danger);
+    color: var(--danger-text);
+    border: 1px solid var(--danger-hover);
+}
+
+.dark-mode .alert-primary {
+    background-color: var(--primary);
+    color: var(--primary-text);
+    border: 1px solid var(--primary-hover);
+}
+
+.dark-mode .alert-success {
+    background-color: var(--success);
+    color: var(--success-text);
+    border: 1px solid var(--success-hover);
+}
+
+.dark-mode .alert-info {
+    background-color: var(--info);
+    color: var(--info-text);
+    border: 1px solid var(--info-hover);
+}
+
+.dark-mode .alert-warning {
+    background-color: var(--warning);
+    color: var(--warning-text);
+    border: 1px solid var(--warning-hover);
+}
+
+.dark-mode .alert-danger {
+    background-color: var(--danger);
+    color: var(--danger-text);
+    border: 1px solid var(--danger-hover);
+}
+
+/* SweetAlert2 Custom Toast for Dark Mode */
+.dark-mode .swal2-toast-custom {
+    background-color: #343a40 !important;
+    /* Dark mode background */
+    color: #ffffff !important;
+    /* Text color in dark mode */
+}
+
+.dark-mode .swal2-toast-custom .swal2-title {
+    color: #ffffff !important;
+    /* Toast title color */
+}
+
+.dark-mode .swal2-toast-custom .swal2-success-icon,
+.dark-mode .swal2-toast-custom .swal2-error-icon {
+    color: #f8d7da !important;
+    /* Customize icon color for better visibility in dark mode */
+}
+
+/* Calendar event title in dark mode */
+.dark-mode .fc-list-event-title {
+    color: #454d55;
+    /* Ensure the text is white in dark mode */
+}
+
+.dark-mode .fc-list-event-time {
+    color: #454d55;
+    /* Ensure the text is white in dark mode */
+}
+
+.dark-mode .fc-list-event-title:hover {
+    color: #454d55;
+    /* Change text color on hover for visibility */
+    background-color: #454d55;
+    /* Optional: Add background highlight on hover */
+}
+
+/* Calendar event title in dark mode */
+.fc-list-event-title {
+    color: #454d55;
+    /* Ensure the text is white in dark mode */
+}
+
+.fc-list-event-time {
+    color: #454d55;
+    /* Ensure the text is white in dark mode */
+}
+
+.fc-list-event-title:hover {
+    color: #454d55;
+    /* Change text color on hover for visibility */
+    background-color: #454d55;
+    /* Optional: Add background highlight on hover */
+}
+
+/* Custom SweetAlert2 Styling for Dark Mode */
+.dark-mode .swal2-popup {
+    background-color: #343a40 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.dark-mode .swal2-title {
+    color: #ffffff !important;
+}
+
+.dark-mode .swal2-content {
+    color: #d1d1d1 !important;
+}
+
+.dark-mode .swal2-icon {
+    color: #ffffff !important;
+}
+
+.dark-mode .swal2-icon-success {
+    color: #28a745 !important;
+}
+
+.dark-mode .swal2-icon-error {
+    color: #dc3545 !important;
+}
+
+.dark-mode .swal2-icon-warning {
+    color: #ffc107 !important;
+}
+
+.dark-mode .swal2-icon-info {
+    color: #17a2b8 !important;
+}
+
+.dark-mode .swal2-confirm {
+    background-color: var(--primary) !important;
+    color: #ffffff !important;
+}
+
+.dark-mode .swal2-cancel {
+    background-color: var(--danger) !important;
+    color: #ffffff !important;
+}
+
+/* Button hover effects */
+.dark-mode .swal2-confirm:hover {
+    background-color: var(--primary-hover) !important;
+}
+
+.dark-mode .swal2-cancel:hover {
+    background-color: var(--danger-hover) !important;
+}
+
+/* Custom Modern Minimalist Scrollbar for Light Mode */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #c0c0c0;
+    border-radius: 10px;
+    border: none;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #a0a0a0;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-corner {
+    background-color: #f0f0f0;
+}
+
+/* Custom Scrollbar Styling for Dark Mode */
+.dark-mode ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.dark-mode ::-webkit-scrollbar-thumb {
+    background-color: #555e69;
+    border-radius: 10px;
+    border: none;
+}
+
+.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background-color: #757575;
+}
+
+.dark-mode ::-webkit-scrollbar-track {
+    background-color: #2e3238;
+    border-radius: 10px;
+}
+
+.dark-mode ::-webkit-scrollbar-corner {
+    background-color: #2e3238;
+}
+
+/* Firefox Scrollbar Customization */
+body,
+.dark-mode {
+    scrollbar-width: thin;
+    scrollbar-color: #c0c0c0 #f0f0f0;
+    /* Light Mode */
+}
+
+.dark-mode {
+    scrollbar-color: #555e69 #2e3238;
+    /* Dark Mode */
+}
+
+/* Button Customization */
+::-webkit-scrollbar-button {
+    display: none;
+    /* Hides default buttons for a cleaner look */
+}
+.logo-img {
+    height: 120px;
+    width: 120px;
+    background: transparent;
+    object-fit: contain;
+    box-shadow: 0 10px 15px #ffffff !important;
+  }
+  
+  /* Dark Mode */
+  .dark-mode .logo-img {
+    box-shadow: 0 10px 15px #343A40 !important;
+  }
+  

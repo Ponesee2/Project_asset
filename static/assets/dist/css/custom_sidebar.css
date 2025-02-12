@@ -1,0 +1,63 @@
+.custom-sidebar {
+  background-color: #ffffff;
+  /* Background color */
+}
+
+.custom-sidebar .nav-link {
+  color: #FFFFFF;
+  /* Text color */
+}
+
+.custom-sidebar .nav-sidebar .nav-item>.nav-link.active {
+  background-color: #648f5a !important;
+  /* Example: #4CAF50 */
+  color: #ffffff !important;
+  /* Example: #FFFFFF */
+}
+
+.custom-sidebar .nav-link:hover {
+  color: #1E90FF;
+  /* Hover text color */
+  background-color: #314455;
+  /* Hover background color */
+}
+
+.custom-sidebar .sidebar-divider {
+  border-color: #757575;
+  /* Divider color */
+}
+
+.custom-sidebar .brand-link {
+  background-color: #ffffff;
+  color: #555555;
+}
+
+.custom-sidebar .sidebar-brand-text {
+  color: #314455;
+  /* Brand text color */
+}
+
+.custom-sidebar .nav-item.active .nav-link span {
+  font-weight: bold;
+  /* Active link font weight */
+  position: relative;
+  /* Ensure text is above the animation */
+  z-index: 2;
+}
+
+/* Ensure the sidebar image is resized when the sidebar is collapsed */
+.sidebar-mini.sidebar-collapse .custom-sidebar .img-circle {
+  width: 60px !important;
+  height: 60px !important;
+  transition: width 0.3s ease, height 0.3s ease;
+  /* Adds smooth animation for width and height */
+}
+
+/* Add initial state for the expanded sidebar */
+.custom-sidebar .img-circle {
+  width: 100px;
+  /* or your preferred size for expanded sidebar */
+  height: 100px;
+  transition: width 0.3s ease, height 0.3s ease;
+  /* Smooth transition for expanded state */
+}

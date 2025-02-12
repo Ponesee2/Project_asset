@@ -1,0 +1,45 @@
+/* Calendar Card Styles */
+.card.bg-gradient-success {
+    background: linear-gradient(45deg, #28a745, #218838);
+    border-radius: 10px;
+    color: white;
+}
+
+.card.bg-gradient-success .card-title {
+    font-weight: bold;
+    color: white;
+}
+
+.card.bg-gradient-success .card-tools .btn {
+    background-color: white;
+    color: #28a745;
+}
+
+.card.bg-gradient-success .btn:hover {
+    background-color: #218838;
+    color: white;
+}
+
+#calendar .fc-toolbar-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: white;
+}
+
+#calendar .fc-button {
+    background-color: white;
+    color: #28a745;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+#calendar .fc-button:hover {
+    background-color: #218838;
+    color: white;
+}
+
+#calendar .fc-today {
+    background-color: white !important;
+    color: #28a745 !important;
+}

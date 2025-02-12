@@ -191,13 +191,78 @@ class Asset(models.Model):
 #     def __str__(self):
 #         return f"Asset: {self.asset}, Assigned to {self.employee}"
 
+# class AssignedAssetTransaction(models.Model):
+#     transaction_id = models.CharField(max_length=20, unique=True, editable=False)
+#     business_unit = models.ForeignKey(BusinessUnit, related_name='transactions_from', on_delete=models.PROTECT)
+#     department = models.ForeignKey(Department, related_name='transactions_from', on_delete=models.PROTECT)
+#     employee = models.ForeignKey(Employee, related_name='transactions', on_delete=models.PROTECT)
+#     business_unitfrom = models.ForeignKey(BusinessUnit, related_name='transactions_from', on_delete=models.PROTECT)
+#     departmentform = models.ForeignKey(Department, related_name='transactions_from', on_delete=models.PROTECT)
+#     business_unitto = models.ForeignKey(BusinessUnit, related_name='transactions_to', on_delete=models.PROTECT)
+#     departmentto = models.ForeignKey(Department, related_name='transactions_to', on_delete=models.PROTECT)
+#     purpose = models.TextField(max_length=100, blank=True, null=True)
+#     date = models.DateField(blank=True, null=True)
+#     manager = models.TextField(max_length=100, blank=True, null=True)
+#     admin = models.TextField(max_length=100, blank=True, null=True)
+#     corporatemanager = models.TextField(max_length=100, blank=True, null=True)
+
+#     def save(self, *args, **kwargs):
+#         if not self.transaction_id:
+#             self.transaction_id = f"T{int(time.time())}"  # Unique Transaction ID
+#         super().save(*args, **kwargs)
+
+#     def __str__(self):
+#         return f"Transaction {self.transaction_id} for {self.employee}"
+
 class AssignedAssetTransaction(models.Model):
     transaction_id = models.CharField(max_length=20, unique=True, editable=False)
-    business_unit = models.ForeignKey(BusinessUnit, related_name='transactions_from', on_delete=models.PROTECT)
-    department = models.ForeignKey(Department, related_name='transactions_from', on_delete=models.PROTECT)
-    business_unitto = models.ForeignKey(BusinessUnit, related_name='transactions_to', on_delete=models.PROTECT)
-    departmentto = models.ForeignKey(Department, related_name='transactions_to', on_delete=models.PROTECT)
-    employee = models.ForeignKey(Employee, related_name='transactions', on_delete=models.PROTECT)
+    
+    business_unit = models.ForeignKey(
+        BusinessUnit, 
+        related_name='assigned_transactions',  # Changed related_name
+        on_delete=models.PROTECT
+    )
+    
+    department = models.ForeignKey(
+        Department, 
+        related_name='assigned_department_transactions',  # Changed related_name
+        on_delete=models.PROTECT
+    )
+    
+    employee = models.ForeignKey(
+        Employee, 
+        related_name='transactions', 
+        on_delete=models.PROTECT
+    )
+    
+    business_unitfrom = models.ForeignKey(
+        BusinessUnit, 
+        related_name='transferred_from_transactions',  # Changed related_name
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True
+    )
+    
+    departmentfrom = models.ForeignKey(
+        Department, 
+        related_name='transferred_from_department_transactions',  # Changed related_name
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True
+    )
+    
+    business_unitto = models.ForeignKey(
+        BusinessUnit, 
+        related_name='transactions_to', 
+        on_delete=models.PROTECT
+    )
+    
+    departmentto = models.ForeignKey(
+        Department, 
+        related_name='transactions_to', 
+        on_delete=models.PROTECT
+    )
+    
     purpose = models.TextField(max_length=100, blank=True, null=True)
     date = models.DateField(blank=True, null=True)
     manager = models.TextField(max_length=100, blank=True, null=True)
@@ -211,7 +276,7 @@ class AssignedAssetTransaction(models.Model):
 
     def __str__(self):
         return f"Transaction {self.transaction_id} for {self.employee}"
-    
+
 # class AssignedAsset(models.Model):
 #     transaction = models.ForeignKey(AssignedAssetTransaction, related_name="assets", on_delete=models.CASCADE)
 #     asset = models.ForeignKey(Asset, related_name='assigned_assets', on_delete=models.PROTECT)
@@ -220,19 +285,77 @@ class AssignedAssetTransaction(models.Model):
 #     def __str__(self):
 #         return f"{self.quantity} x {self.asset} (Transaction {self.transaction.transaction_id})"
 
+# class AssignedAsset(models.Model):
+#     transaction = models.ForeignKey(
+#         AssignedAssetTransaction, 
+#         related_name="assets", 
+#         on_delete=models.CASCADE
+#     )
+#     asset = models.ForeignKey(
+#         Asset, 
+#         related_name='assigned_assets', 
+#         on_delete=models.PROTECT
+#     )
+#     quantity_assigned = models.PositiveIntegerField(default=1)
+
+#     def save(self, *args, **kwargs):
+#         """Automatically update asset status and archive it when assigned."""
+#         # Check if quantity assigned exceeds available stock
+#         if self.quantity_assigned > self.asset.available_quantity:
+#             raise ValueError(f"Cannot assign {self.quantity_assigned} units. Only {self.asset.available_quantity} available.")
+
+#         # Deduct assigned quantity from available stock
+#         self.asset.available_quantity -= self.quantity_assigned
+
+#         # Archive asset only if all units are assigned
+#         if self.asset.available_quantity == 0:
+#             self.asset.is_archived = True
+#             self.asset.status = Asset.StatusChoices.ASSIGNED
+#         else:
+#             self.asset.is_archived = False  # Unarchive if some stock remains
+#             self.asset.status = Asset.StatusChoices.AVAILABLE  # Assume AVAILABLE is a status choice
+
+#         self.asset.save()  # Save updated asset info
+
+#         # Save the AssignedAsset instance
+#         super().save(*args, **kwargs)
+
+#     def delete(self, *args, **kwargs):
+#         """Automatically restore asset availability when unassigned."""
+#         # Add back the quantity to available stock
+#         self.asset.available_quantity += self.quantity_assigned
+
+#         # Unarchive asset if quantity is available again
+#         if self.asset.available_quantity > 0:
+#             self.asset.is_archived = False
+#             self.asset.status = Asset.StatusChoices.AVAILABLE  # Restore status to AVAILABLE
+
+#         self.asset.save()  # Save changes
+
+#         # Delete the AssignedAsset instance
+#         super().delete(*args, **kwargs)
+
+#     def __str__(self):
+#         return f"{self.quantity_assigned} x {self.asset} (Transaction {self.transaction.transaction_id})"
+
+from django.db import transaction
+
 class AssignedAsset(models.Model):
-    transaction = models.ForeignKey(AssignedAssetTransaction, related_name="assets", on_delete=models.PROTECT)
-    asset = models.ForeignKey(Asset, related_name='assigned_assets', on_delete=models.PROTECT)
+    transaction = models.ForeignKey(
+        AssignedAssetTransaction, 
+        related_name="assets", 
+        on_delete=models.CASCADE
+    )
+    asset = models.ForeignKey(
+        Asset, 
+        related_name='assigned_assets', 
+        on_delete=models.PROTECT
+    )
     quantity_assigned = models.PositiveIntegerField(default=1)
 
-
     def save(self, *args, **kwargs):
-        """Automatically update asset status when assigned."""
-        if self.asset.status != Asset.StatusChoices.ASSIGNED:
-            self.asset.status = Asset.StatusChoices.ASSIGNED
-            self.asset.save()
-            self.asset.is_archived = True 
-        super().save(*args, **kwargs)
+        """Only save the AssignedAsset, do not modify available_quantity here."""
+        super().save(*args, **kwargs)  # Save AssignedAsset instance
 
     def __str__(self):
         return f"{self.quantity_assigned} x {self.asset} (Transaction {self.transaction.transaction_id})"

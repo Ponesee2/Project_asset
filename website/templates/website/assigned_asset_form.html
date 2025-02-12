@@ -30,117 +30,140 @@
     <section class="content">
       <div class="container-fluid">
         <!-- Your content here -->
-       <form method="post">
+        <form method="post">
           {% csrf_token %}
-          <div class="d-flex flex-row w-100">
-                <div class="form-group w-50 m-2">
-                    <label for="{{ forms.business_unit.id_for_label }}">Business Unit</label>
-                    {{ transaction_form.business_unit }}
-                </div>
-                <div class="form-group w-50 m-2">
-                    <label for="{{ form.department.id_for_label }}">Department</label>
-                    {{ transaction_form.department }}
-                </div>
-                <div class="form-group w-50 m-2">
-                    <label for="{{ form.employee.id_for_label }}">Employee</label>
-                    {{ transaction_form.employee }}
-              </div>
-          </div>
-          <div class="d-flex flex-row w-100">
-              <div class="form-group w-50 m-2">
-                  <label id="business_unit" for="{{ form.business_unitto.id_for_label }}">From Business Unit:</label>
-                  {{ transaction_form.business_unit }}
-              </div>
-              
-              <div class="form-group w-50 m-2">
-                  <label id="department" for="{{ form.departmentto.id_for_label }}">From Department:</label>
-                  {{ transaction_form.department }}
-              </div>
-              
-              <div class="form-group w-50 m-2">
-                  <label for="{{ form.purpose.id_for_label }}">Purpose</label>
-                  {{ transaction_form.purpose }}
-              </div>
-          </div>
-          <div class="d-flex flex-row w-100">
-              <div class="form-group w-50 m-2">
-                  <label id="business_unit" for="{{ form.business_unitto.id_for_label }}">Business Unit To</label>
-                  {{ transaction_form.business_unitto }}
-              </div>
-              
-              <div class="form-group w-50 m-2">
-                  <label id="department" for="{{ form.departmentto.id_for_label }}">Department To</label>
-                  {{ transaction_form.departmentto }}
-              </div>
-              
-              <div class="form-group w-50 m-2">
-                  <label for="{{ form.purpose.id_for_label }}">Purpose</label>
-                  {{ transaction_form.purpose }}
-              </div>
-          </div>
-          <div class="d-flex flex-row w-100">
-            <div class="form-group w-50 m-2">
-                <label for="{{ form.date.id_for_label }}">Date</label>
-                {{ transaction_form.date }}
-            </div>
-            
-            <div class="form-group w-50 m-2">
-                <label for="{{ form.manager.id_for_label }}">Manager</label>
-                {{ transaction_form.manager }}
-            </div>
-            
-            <div class="form-group w-50 m-2">
-                <label for="{{ form.admin.id_for_label }}">Admin</label>
-                {{ transaction_form.admin }}
-            </div>          
-            <div class="form-group w-50 m-2">
-              <label for="{{ form.corporatemanager.id_for_label }}">Corporate Manager</label>
-              {{ transaction_form.corporatemanager }}
-            </div>
-          </div>
-
-
+          {{ transaction_form.as_p }}
+      
           <h3 class="mt-3">Assign Assets</h3>
           <div id="asset-formset">
-            {{ asset_formset.management_form }}
-            {% for form in asset_formset %}
-                <div class="asset-form">
-                  <div class="form-group w-50 m-2">
-                    <label for="">Asset</label>
-                    {{ form.asset }}
+              {{ asset_formset.management_form }}
+              {% for form in asset_formset %}
+                  <div class="asset-form">
+                      {{ form.as_p }}
                   </div>
-                  <div class="form-group w-50 m-2">
-                    <label for="">Quantity</label>
-                    {{ form.quantity_assigned }}
-                  </div>   
-                </div>
-            {% endfor %}
+              {% endfor %}
           </div>
+      
           <button class="btn btn-primary" type="button" id="add-asset">Add Another Asset</button>
           <button class="btn btn-success" type="submit">Save Assignment</button>
-        </form>
+      </form>
       </div>
     </section>
     <!-- /.content -->
   </div>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $("#business_unit").change(function () {
-                var businessUnitId = $(this).val();
-                $.ajax({
-                    url: "{% url 'get_departments' %}",
-                    data: {business_unit_id: businessUnitId},
-                    success: function (data) {
-                        var departmentDropdown = $("#department");
-                        departmentDropdown.empty();
-                        departmentDropdown.append('<option value="">Select department</option>');
-                        $.each(data, function (index, department) {
-                            departmentDropdown.append('<option value="' + department.id + '">' + department.name + '</option>');
-                        });
-                    }
-                });
-            });
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById('add-asset').addEventListener('click', function () {
+        let formsetDiv = document.getElementById('asset-formset');
+        let totalForms = document.getElementById("id_assets-TOTAL_FORMS");
+        let formCount = parseInt(totalForms.value);
+
+        // Clone the first asset form instead of the last one to ensure proper structure
+        let newForm = formsetDiv.children[formsetDiv.children.length - 1].cloneNode(true);
+
+        // Update form indexes for all input fields
+        newForm.querySelectorAll("input, select, textarea, label").forEach(function (element) {
+            if (element.name) {
+                let newName = element.name.replace(/-\d+-/, `-${formCount}-`);
+                element.setAttribute("name", newName);
+            }
+            if (element.id) {
+                let newId = element.id.replace(/-\d+-/, `-${formCount}-`);
+                element.setAttribute("id", newId);
+            }
+            if (element.tagName !== "LABEL") {
+                element.value = ''; // Clear input fields (except labels)
+            }
         });
-    </script>    
+
+        // Append the new form and increment the total form count
+        formsetDiv.appendChild(newForm);
+        totalForms.value = formCount + 1; // Update Django formset management
+    });
+});
+
+        // CSRF token setup (if needed for POST requests; GET requests typically don’t require it)
+    var csrftoken = '{{ csrf_token }}';
+
+    // When the first business_unit is changed, update its department dropdown
+    $("#business_unit").change(function () {
+      var businessUnitId = $(this).val();
+      
+      if (businessUnitId) {
+        $.ajax({
+          url: "{% url 'get_more_departments' %}",
+          type: "GET",
+          data: { business_unit_id: businessUnitId },
+          headers: { "X-CSRFToken": csrftoken },
+          success: function (data) {
+            var departmentDropdown = $("#department");
+            departmentDropdown.empty();
+            departmentDropdown.append('<option value="">Select department</option>');
+            $.each(data.departments, function (index, department) {
+              departmentDropdown.append('<option value="' + department.id + '">' + department.name + '</option>');
+            });
+          },
+          error: function () {
+            alert("Error loading departments.");
+          }
+        });
+      } else {
+        $("#department").empty().append('<option value="">Select department</option>');
+      }
+    });
+    
+    // When the department is changed, update the employee dropdown
+    $("#department").change(function () {
+      var departmentId = $(this).val();
+  
+      if (departmentId) {
+        $.ajax({
+          url: "{% url 'get_employees' %}",
+          type: "GET",
+          data: { department_id: departmentId },
+          success: function (data) {
+            var employeeDropdown = $("#id_employee");  // Use the actual ID of the select element
+            employeeDropdown.empty();
+            employeeDropdown.append('<option value="">Select employee</option>');
+            $.each(data.employees, function (index, employee) {
+              employeeDropdown.append('<option value="' + employee.id + '">' + employee.name + '</option>');
+            });
+          },
+          error: function () {
+            alert("Error loading employees.");
+          }
+        });
+      } else {
+        $("#id_employee").empty().append('<option value="">Select employee</option>');
+      }
+    });
+  
+    // Similarly, update the departmentto field based on business_unitto (if needed)
+    $("#business_unitto").change(function () {
+      var businessUnittoId = $(this).val();
+      
+      if (businessUnittoId) {
+        $.ajax({
+          url: "{% url 'get_more_departments' %}",
+          type: "GET",
+          data: { business_unit_id: businessUnittoId },
+          headers: { "X-CSRFToken": csrftoken },
+          success: function (data) {
+            var departmenttoDropdown = $("#departmentto");
+            departmenttoDropdown.empty();
+            departmenttoDropdown.append('<option value="">Select department</option>');
+            $.each(data.departments, function (index, department) {
+              departmenttoDropdown.append('<option value="' + department.id + '">' + department.name + '</option>');
+            });
+          },
+          error: function () {
+            alert("Error loading departments.");
+          }
+        });
+      } else {
+        $("#departmentto").empty().append('<option value="">Select department</option>');
+      }
+    });
+  </script>
 {% endblock %}

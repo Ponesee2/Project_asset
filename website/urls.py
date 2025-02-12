@@ -41,4 +41,6 @@ urlpatterns = [
     path('assigned_asset/delete/<int:pk>/', views.assigned_asset_delete, name='assigned_asset_delete'),
     path('assigned_asset/detail/<int:pk>/', views.assigned_asset_detail, name='assigned_asset_detail'),
     path('get-departments/', views.get_departments, name='get_departments'),
+    path('get_more_departments', views.get_more_departments, name='get_more_departments'),
+    path('get-employees/', views.get_employees, name='get_employees'),
 ]
