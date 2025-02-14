@@ -17,8 +17,7 @@ def dashboard(request):
     asset_count = Asset.objects.count()
     supplier_count = Supplier.objects.count()
     assigned_asset_count = AssignedAsset.objects.count()
-    business_units = BusinessUnit.objects.annotate(
-      total_assigned_assets = Sum('transferred_from_transactions__assets__quantity_assigned')) 
+    business_units = BusinessUnit.objects.annotate() 
     context = {
         'business_unit_count': business_unit_count,
         'department_count': department_count,
@@ -27,8 +26,8 @@ def dashboard(request):
         'asset_model_count': asset_model_count,
         'asset_count': asset_count,
         'supplier_count': supplier_count,
-        'assigned_asset_count': assigned_asset_count,
-        'business_units': business_units
+        'business_units': business_units,
+        'assigned_asset_count': assigned_asset_count
     }   
     return render(request, 'website/index.html', context)
 # Create a new BusinessUnit
@@ -44,8 +43,7 @@ def create_business_unit(request):
 
 # List all BusinessUnits
 def business_unit_list(request):
-    business_units = BusinessUnit.objects.annotate(
-    total_assigned_assets = Sum('transferred_from_transactions__assets__quantity_assigned'))    
+    business_units = BusinessUnit.objects.annotate()    
     return render(request, 'website/business_unit_list.html', {'business_units': business_units})
 
 # Update a BusinessUnit
@@ -564,61 +562,94 @@ from django.contrib import messages
 #         "asset_formset": asset_formset
 #     })
 
+# def assigned_asset_create(request):
+#     if request.method == "POST":
+#         transaction_form = AssignedAssetTransactionForm(request.POST)
+#         asset_formset = AssignedAssetFormSet(request.POST)
+
+#         if transaction_form.is_valid() and asset_formset.is_valid():
+#             with db_transaction.atomic():  # Ensures atomic operations
+#                 transaction = transaction_form.save()
+#                 asset_instances = asset_formset.save(commit=False)
+
+#                 assigned_assets = set()
+
+#                 for assigned_asset in asset_instances:
+#                     asset = assigned_asset.asset
+
+#                     if asset.id in assigned_assets:
+#                         messages.error(request, f"Duplicate assignment detected for asset: {asset.name}")
+#                         return render(
+#                             request, "website/assigned_asset_form.html",
+#                             {"transaction_form": transaction_form, "asset_formset": asset_formset}
+#                         )
+
+#                     assigned_assets.add(asset.id)
+#                     assigned_asset.transaction = transaction
+#                     assigned_asset.save()
+
+#                 messages.success(request, "Assets successfully assigned.")
+#                 return redirect("assigned_asset_list")
+
+#         messages.error(request, "Please correct the errors below.")
+
+#     else:  # GET request
+#         transaction_form = AssignedAssetTransactionForm()
+#         transaction_instance = AssignedAssetTransaction()
+#         asset_formset = AssignedAssetFormSet(instance=transaction_instance)
+
+#     return render(
+#         request, "website/assigned_asset_form.html",
+#         {"transaction_form": transaction_form, "asset_formset": asset_formset}
+#     )
+
+from django.db import transaction as db_transaction
+
+
+
 def assigned_asset_create(request):
     if request.method == "POST":
         transaction_form = AssignedAssetTransactionForm(request.POST)
         asset_formset = AssignedAssetFormSet(request.POST)
-
+        print(request.POST)
         if transaction_form.is_valid() and asset_formset.is_valid():
-            with db_transaction.atomic():  # Ensures atomic operations
-                transaction = transaction_form.save()
-                asset_instances = asset_formset.save(commit=False)
+            try:
+                with db_transaction.atomic():  # Atomic transaction ensures all saves succeed
+                    transaction = transaction_form.save()
 
-                insufficient_assets = []
-                assets_to_update = {}
+                    asset_instances = asset_formset.save(commit=False)
+                    for assigned_asset in asset_instances:
+                        assigned_asset.transaction = transaction
+                        assigned_asset.asset.status = Asset.StatusChoices.ASSIGNED  # Set status
+                        assigned_asset.asset.is_archived = True  # Archive asset
+                        assigned_asset.asset.save()  # Save asset update
+                        assigned_asset.save()  # Save assigned asset record
+                        print(request.POST)
 
-                for assigned_asset in asset_instances:
-                    asset = assigned_asset.asset
-                    asset.refresh_from_db()  # Ensure latest stock
+                    messages.success(request, "Assets successfully assigned and archived.")
+                    return redirect("assigned_asset_list")
+                
 
-                    if assigned_asset.quantity_assigned > asset.available_quantity:
-                        insufficient_assets.append(f"{asset.name} (Only {asset.available_quantity} available)")
-                    else:
-                        assets_to_update[asset] = assigned_asset.quantity_assigned
+            except Exception as e:
+                print(f"Database error: {e}")  # Debugging
+                messages.error(request, f"An error occurred while saving: {e}")
+            else:
+                    print(transaction_form.errors)  # Debugging
+                    print(asset_formset.errors)  # Debugging
+        else:
+            print("Transaction Form Errors:", transaction_form.errors)  # Debugging
+            print("Formset Errors:", asset_formset.errors)  # Debugging
+            messages.error(request, "Please correct the errors below.")
+        print(request.POST)
 
-                if insufficient_assets:
-                    messages.error(request, f"Not enough quantity available for: {', '.join(insufficient_assets)}")
-                    return render(
-                        request, "website/assigned_asset_form.html",
-                        {"transaction_form": transaction_form, "asset_formset": asset_formset}
-                    )
-
-                # Deduct quantities AFTER validation
-                for asset, qty in assets_to_update.items():
-                    asset.available_quantity -= qty
-                    if asset.available_quantity == 0:
-                        asset.is_archived = True
-                    asset.save()
-
-                # Save Assigned Assets after stock updates
-                for assigned_asset in asset_instances:
-                    assigned_asset.transaction = transaction
-                    assigned_asset.save()
-
-                messages.success(request, "Assets successfully assigned.")
-                return redirect("assigned_asset_list")
-
-        messages.error(request, "Please correct the errors below.")
-
-    else:  # GET request
+    else:
         transaction_form = AssignedAssetTransactionForm()
-        transaction_instance = AssignedAssetTransaction()
-        asset_formset = AssignedAssetFormSet(instance=transaction_instance)
+        asset_formset = AssignedAssetFormSet()
 
-    return render(
-        request, "website/assigned_asset_form.html",
-        {"transaction_form": transaction_form, "asset_formset": asset_formset}
-    )
+    return render(request, "website/assigned_asset_form.html", {
+        "transaction_form": transaction_form,
+        "asset_formset": asset_formset,
+    })
 
 def assigned_asset_update(request, pk):
     transaction = get_object_or_404(AssignedAssetTransaction, pk=pk)
@@ -681,6 +712,7 @@ def get_more_departments(request):
     return JsonResponse({"departments": departments})
 
 from django.views.decorators.http import require_GET
+
 @require_GET
 def get_employees(request):
     department_id = request.GET.get('department_id')
@@ -699,3 +731,21 @@ def get_employees(request):
     ]
     
     return JsonResponse({"employees": employees})
+
+def return_asset(request):
+    # Get all assigned assets where the asset is not archived
+    assigned_assets = AssignedAsset.objects.filter(asset__status='Assigned', asset__is_archived=False)
+
+    if request.method == 'POST':
+        asset_id = request.POST.get('asset_id')
+        asset_transaction = AssignedAsset.objects.get(id=asset_id)
+
+        # Update the asset status instead of transaction
+        asset_transaction.asset.status = 'Available'  # Make it available again
+        asset_transaction.asset.is_archived = False  # Unarchive the asset
+        asset_transaction.asset.save()
+
+        return redirect('return_asset')  # Refresh the page
+    print(request.POST)
+
+    return render(request, 'website/assigned_asset_returned.html', {'assigned_assets': assigned_assets})

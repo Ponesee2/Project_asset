@@ -178,7 +178,7 @@
                             <th>Asset Tag</th>
                             <th>Asset Name</th>
                             <th>Model/Serial Number</th>
-                            <th>Quantity</th>
+                            <th>Units</th>
                             <th>Business Unit From:</th>
                             <th>Department From</th>
                             <th>Business Unit To:</th>
@@ -191,11 +191,11 @@
                             <td>{{ asset.asset.asset_tag }}</td>
                             <td>{{ asset.asset }}</td>
                             <td>{{ asset.asset.serial_number }}</td>
-                            <td>{{ asset.quantity_assigned }}</td>
-                            <td>{{ transaction.business_unit }}</td>
-                            <td>{{ transaction.department }}</td>
+                            <td>{{ asset.asset.unit }}</td>
                             <td>{{ transaction.business_unitto }}</td>
                             <td>{{ transaction.departmentto }}</td>
+                            <td>{{ transaction.business_unitfrom }}</td>
+                            <td>{{ transaction.departmentfrom }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

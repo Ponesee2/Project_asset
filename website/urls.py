@@ -1,4 +1,6 @@
 from django.urls import path
+from django.conf.urls.static import static
+from django.conf import settings
 from . import views
 
 
@@ -43,4 +45,8 @@ urlpatterns = [
     path('get-departments/', views.get_departments, name='get_departments'),
     path('get_more_departments', views.get_more_departments, name='get_more_departments'),
     path('get-employees/', views.get_employees, name='get_employees'),
+    path('return_asset', views.return_asset, name='return_asset'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)    

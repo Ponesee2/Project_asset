@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+  Return Assigned Asset
+{% endblock %}
+{% block content %}
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">Return Aasigned Asset</h1>
+          </div>
+          <!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item">
+                <a href="#">Home</a>
+              </li>
+              <li class="breadcrumb-item active">Return Aasigned Asset</li>
+            </ol>
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <h1>Assigned Asset Transactions</h1>
+    <table border="1">
+        <tr>
+            <th>Asset</th>
+            <th>User</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+        {% for asset_transaction in assigned_assets %}
+        <tr>
+            <td>{{ asset_transaction.asset.name }}</td>
+            <td>{{ asset_transaction.user.username }}</td>
+            <td>{{ asset_transaction.status }}</td>
+            <td>
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="asset_id" value="{{ asset_transaction.id }}">
+                    <button type="submit">Return</button>
+                </form>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">No assigned assets found.</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <!-- Main content -->
+  
+    <!-- /.content -->
+  </div>
+
+{% endblock %}
