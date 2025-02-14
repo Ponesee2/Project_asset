@@ -1,6 +1,7 @@
 from django import forms
 from .models import *
 from django.forms import inlineformset_factory
+from django.forms import BaseInlineFormSet
 
 class BusinessUnitForm(forms.ModelForm):
     class Meta:
@@ -164,7 +165,7 @@ class AssetForm (forms.ModelForm):
         fields = ['asset_category', 'asset_model', 'asset_tag', 'status',
                   'name', 'description', 'serial_number', 'image', 
                   'purchased_date', 'purchased_cost', 'supplier', 
-                  'warranty_end_date', 'date', 'total_quantity', 'available_quantity']
+                  'warranty_end_date', 'date', 'unit']
         widgets = {
             'asset_category': forms.Select(attrs={
                 'class': 'form-control',
@@ -185,14 +186,6 @@ class AssetForm (forms.ModelForm):
             'name': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Input Asset Name'
-            }),
-            'total_quantity': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Input Total Quantity'
-            }),
-            'available_quantity': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Input Available Quantity'
             }),
             'description': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -307,6 +300,10 @@ class AssetForm (forms.ModelForm):
 #             'corporatemanager': forms.TextInput(attrs={'class': 'form-control'}),
 #         }
 
+from django import forms
+from django.forms import BaseInlineFormSet, inlineformset_factory
+from .models import AssignedAssetTransaction, BusinessUnit, Department, Employee, AssignedAsset
+
 class AssignedAssetTransactionForm(forms.ModelForm):
     class Meta:
         model = AssignedAssetTransaction
@@ -331,18 +328,17 @@ class AssignedAssetTransactionForm(forms.ModelForm):
             'corporatemanager': forms.TextInput(attrs={'class': 'form-control'}),
         }
 def __init__(self, *args, **kwargs):
-    # Pop any passed-in parameters for filtering
     business_unit_id = kwargs.pop('business_unit_id', None)
     business_unitto_id = kwargs.pop('business_unitto_id', None)
     business_unitfrom_id = kwargs.pop('business_unitfrom_id', None)
     super().__init__(*args, **kwargs)
 
-    # Populate business_unit, business_unitto, and business_unitfrom dropdowns
+    # Populate business units
     self.fields['business_unit'].queryset = BusinessUnit.objects.all()
     self.fields['business_unitto'].queryset = BusinessUnit.objects.all()
     self.fields['business_unitfrom'].queryset = BusinessUnit.objects.all()
 
-    # Set department queryset based on selected business_unit
+    # 🚀 Fix: Ensure department queryset is populated correctly
     if self.instance.pk and self.instance.business_unit:
         self.fields['department'].queryset = Department.objects.filter(
             business_unit=self.instance.business_unit
@@ -352,28 +348,10 @@ def __init__(self, *args, **kwargs):
             business_unit_id=business_unit_id
         )
     else:
-        self.fields['department'].queryset = Department.objects.none()
+        self.fields['department'].queryset = Department.objects.all()  # 👈 Fallback to all departments (optional)
 
-    # Update employee queryset dynamically based on selected department
-    if 'department' in self.data:
-        try:
-            dept_id = int(self.data.get('department'))
-            self.fields['employee'].queryset = Employee.objects.filter(department_id=dept_id)
-        except (ValueError, TypeError):
-            self.fields['employee'].queryset = Employee.objects.none()
-    elif self.instance.pk and self.instance.department:
-        self.fields['employee'].queryset = Employee.objects.filter(department=self.instance.department)
-    else:
-        self.fields['employee'].queryset = Employee.objects.none()
-
-    # Handle business_unitto and departmentto filtering
-    if 'business_unitto' in self.data:
-        try:
-            bu_to_id = int(self.data.get('business_unitto'))
-            self.fields['departmentto'].queryset = Department.objects.filter(business_unit_id=bu_to_id)
-        except (ValueError, TypeError):
-            self.fields['departmentto'].queryset = Department.objects.none()
-    elif self.instance.pk and self.instance.business_unitto:
+    # 🚀 Fix: Ensure departmentto queryset is populated
+    if self.instance.pk and self.instance.business_unitto:
         self.fields['departmentto'].queryset = Department.objects.filter(
             business_unit=self.instance.business_unitto
         )
@@ -382,16 +360,10 @@ def __init__(self, *args, **kwargs):
             business_unit_id=business_unitto_id
         )
     else:
-        self.fields['departmentto'].queryset = Department.objects.none()
+        self.fields['departmentto'].queryset = Department.objects.all()
 
-    # 🔥 New: Handle business_unitfrom and departmentfrom filtering
-    if 'business_unitfrom' in self.data:
-        try:
-            bu_from_id = int(self.data.get('business_unitfrom'))
-            self.fields['departmentfrom'].queryset = Department.objects.filter(business_unit_id=bu_from_id)
-        except (ValueError, TypeError):
-            self.fields['departmentfrom'].queryset = Department.objects.none()
-    elif self.instance.pk and self.instance.business_unitfrom:
+    # 🚀 Fix: Ensure departmentfrom queryset is populated
+    if self.instance.pk and self.instance.business_unitfrom:
         self.fields['departmentfrom'].queryset = Department.objects.filter(
             business_unit=self.instance.business_unitfrom
         )
@@ -400,106 +372,39 @@ def __init__(self, *args, **kwargs):
             business_unit_id=business_unitfrom_id
         )
     else:
-        self.fields['departmentfrom'].queryset = Department.objects.none()
+        self.fields['departmentfrom'].queryset = Department.objects.all()
 
-# AssignedAssetFormSet = inlineformset_factory(
-#     AssignedAssetTransaction, AssignedAsset,
-#     fields=['asset', 'quantity'],
-#     extra=1,  # One empty form to start with
-#     widgets={
-#         'asset': forms.Select(attrs={'class': 'form-control'}),
-#         'quantity': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
-#     }
-# )
-# class AssignedAssetForm(forms.ModelForm):
-#     class Meta:
-#         model = AssignedAsset
-#         fields = ['asset', 'quantity_assigned']
-#         widgets = {
-#             'asset': forms.Select(attrs={'class': 'form-control'}),
-#             'quantity_assigned': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
-#         }
 
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         # Filter to show only assets that are available and not archived
-#         self.fields['asset'].queryset = Asset.objects.filter(available_quantity__gt=0, is_archived=False)
-
-#     def clean_quantity_assigned(self):
-#         quantity_assigned = self.cleaned_data.get('quantity_assigned')
-#         asset = self.cleaned_data.get('asset')
-#         if asset and quantity_assigned > asset.available_quantity:
-#             raise forms.ValidationError(f"Cannot assign {quantity_assigned} units. Only {asset.available_quantity} units available.")
-#         return quantity_assigned
-
-# AssignedAssetFormSet = inlineformset_factory(
-#     AssignedAssetTransaction, AssignedAsset,
-#     form=AssignedAssetForm,
-#     extra=1
-# )
-
-# class AssignedAssetForm(forms.ModelForm):
-#     class Meta:
-#         model = AssignedAsset
-#         fields = ['asset', 'quantity_assigned']
-#         widgets = {
-#             'asset': forms.Select(attrs={'class': 'form-control'}),
-#             'quantity_assigned': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
-#         }
-
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.fields['asset'].queryset = Asset.objects.filter(available_quantity__gt=0, is_archived=False)
-
-#     def clean_quantity_assigned(self):
-#         """Ensure assigned quantity is a positive number"""
-#         quantity_assigned = self.cleaned_data.get('quantity_assigned')
-#         if quantity_assigned and quantity_assigned < 1:
-#             raise forms.ValidationError("Quantity must be at least 1.")
-#         return quantity_assigned
-    
-from django.forms import BaseInlineFormSet
 class BaseAssignedAssetFormSet(BaseInlineFormSet):
     def clean(self):
-        """Ensure that total assigned quantity does not exceed available stock"""
+        """Ensure that assets are properly assigned without duplication."""
         if any(self.errors):
-            return  # Skip validation if there are existing errors
+            return  
 
-        asset_quantities = {}  # Dictionary to store total requested quantities per asset
+        assigned_assets = set()
 
         for form in self.forms:
             if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
-                asset = form.cleaned_data['asset']
-                quantity_assigned = form.cleaned_data['quantity_assigned']
+                asset = form.cleaned_data.get('asset')
+                if asset and asset.id in assigned_assets:
+                    raise forms.ValidationError(f"Duplicate assignment detected for asset: {asset.name}")
+                assigned_assets.add(asset.id)
 
-                if asset.id not in asset_quantities:
-                    asset_quantities[asset.id] = 0
-                asset_quantities[asset.id] += quantity_assigned
-
-        # Validate each asset's total assigned quantity
-        insufficient_assets = []
-        for asset_id, total_quantity in asset_quantities.items():
-            asset = Asset.objects.get(id=asset_id)
-            asset.refresh_from_db()  # Get the latest available quantity
-
-            if total_quantity > asset.available_quantity:
-                insufficient_assets.append(f"{asset.name} (Only {asset.available_quantity} available)")
-
-        if insufficient_assets:
-            raise forms.ValidationError(
-                f"Not enough quantity available for: {', '.join(insufficient_assets)}"
-            )
 
 class CustomAssignedAssetFormSet(BaseAssignedAssetFormSet):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Filter the queryset to include only assets that are not archived
         for form in self.forms:
-            form.fields['asset'].queryset = form.fields['asset'].queryset.filter(is_archived=False)
+            if 'asset' in form.fields:
+                form.fields['asset'].queryset = form.fields['asset'].queryset.filter(
+                    is_archived=False, 
+                    status=Asset.StatusChoices.AVAILABLE
+                )
 
 AssignedAssetFormSet = inlineformset_factory(
     AssignedAssetTransaction, AssignedAsset,
     formset=CustomAssignedAssetFormSet,
-    fields=['asset', 'quantity_assigned'],
+    fields=['asset'],  
+    widgets={'asset': forms.Select(attrs={'class': 'form-control'})},
     extra=1
 )

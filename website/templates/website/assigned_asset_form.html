@@ -30,140 +30,181 @@
     <section class="content">
       <div class="container-fluid">
         <!-- Your content here -->
-        <form method="post">
-          {% csrf_token %}
-          {{ transaction_form.as_p }}
-      
-          <h3 class="mt-3">Assign Assets</h3>
-          <div id="asset-formset">
-              {{ asset_formset.management_form }}
-              {% for form in asset_formset %}
-                  <div class="asset-form">
-                      {{ form.as_p }}
-                  </div>
-              {% endfor %}
-          </div>
-      
-          <button class="btn btn-primary" type="button" id="add-asset">Add Another Asset</button>
-          <button class="btn btn-success" type="submit">Save Assignment</button>
-      </form>
+      <form method="post" action="{% if form.instance.pk %}{% url 'assigned_asset_update' form.instance.pk %}{% else %}{% url 'assigned_asset_create' %}{% endif %}">
+        {% csrf_token %}  
+        <h4>Employee Information</h4>
+        <div class="row w-100  m-3">
+            <div class="form-group w-25">
+                <label for="id_business_unit">Business Unit</label>
+                {{ transaction_form.business_unit }}
+            </div>
+            <div class="form-group w-25">
+                <label for="id_department">Department</label>
+                {{ transaction_form.department }}
+            </div>
+            <div class="form-group w-25">
+                <label for="id_employee">Employee/Requested</label>
+                {{ transaction_form.employee }}
+            </div>
+        </div>
+    
+        <h4>Transfer from </h4>
+        <div class="row w-100 m-3">
+            <div class="form-group w-25 mr-1">
+                <label for="id_business_unitfrom">From Business Unit </label>
+                {{ transaction_form.business_unitfrom }}
+            </div>
+            <div class="form-group w-25">
+                <label for="id_departmentfrom"> From Department</label>
+                {{ transaction_form.departmentfrom }}
+            </div>
+        </div>
+    
+        <h4>Transfer to </h4>
+        <div class="row w-100 m-3">
+            <div class="form-group w-25 mr-1">
+                <label for="id_business_unitto"> Business Unit to</label>
+                {{ transaction_form.business_unitto }}
+            </div>
+            <div class="form-group w-25 mr-1">
+                <label for="id_departmentto">Department to</label>
+                {{ transaction_form.departmentto }}
+            </div>
+        </div>
+    
+        <h4>Purpose or Use </h4>
+        <div class="row w-100 m-3">
+            <div class="form-group w-25 mr-1">
+                <label for="id_purpose"> Purpose</label>
+                {{ transaction_form.purpose }}
+            </div>
+            <div class="form-group w-25 mr-1">
+                <label for="id_date">Date</label>
+                {{ transaction_form.date }}
+            </div>
+        </div>
+    
+        <h4>Approved By </h4>
+        <div class="row w-100 m-3">
+            <div class="form-group w-25 mr-1">
+                <label for="id_manager">Department/General Manager</label>
+                {{ transaction_form.manager }}
+            </div>
+            <div class="form-group w-25 mr-1">
+                <label for="id_admin">IT Asset Administrator</label>
+                {{ transaction_form.admin }}
+            </div>
+            <div class="form-group w-25 mr-1">
+                <label for="id_corporatemanager">Corporate Manager</label>
+                {{ transaction_form.corporatemanager }}
+            </div>
+        </div>
+    
+        <h3 class="m-3">Assign Assets</h3>
+        <div id="asset-formset">
+            {{ asset_formset.management_form }} 
+            {% for form in asset_formset %}
+                <div class="form-group asset-row d-flex align-items-center w-25 m-1">
+                    <div class="column w-100">
+                        <div class=" w-100">
+                            {{ form.asset }}
+                        </div>                        
+                        <button type="button" class="btn btn-danger btn-sm delete-asset m-1" data-form-index="{{ forloop.counter0 }}">Delete</button>
+                        {{ form.errors }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    
+        <input type="hidden" name="deleted_forms" id="deleted-forms" value="">
+    
+        <div class="m-4">
+            <button class="btn btn-primary" type="button" id="add-asset">Add Another Asset</button>
+            <button class="btn btn-success" type="submit">Save Assignment</button>
+        </div>
+    </form>
+    
       </div>
     </section>
     <!-- /.content -->
   </div>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById('add-asset').addEventListener('click', function () {
-        let formsetDiv = document.getElementById('asset-formset');
-        let totalForms = document.getElementById("id_assets-TOTAL_FORMS");
-        let formCount = parseInt(totalForms.value);
-
-        // Clone the first asset form instead of the last one to ensure proper structure
-        let newForm = formsetDiv.children[formsetDiv.children.length - 1].cloneNode(true);
-
-        // Update form indexes for all input fields
-        newForm.querySelectorAll("input, select, textarea, label").forEach(function (element) {
-            if (element.name) {
-                let newName = element.name.replace(/-\d+-/, `-${formCount}-`);
-                element.setAttribute("name", newName);
-            }
-            if (element.id) {
-                let newId = element.id.replace(/-\d+-/, `-${formCount}-`);
-                element.setAttribute("id", newId);
-            }
-            if (element.tagName !== "LABEL") {
-                element.value = ''; // Clear input fields (except labels)
-            }
-        });
-
-        // Append the new form and increment the total form count
-        formsetDiv.appendChild(newForm);
-        totalForms.value = formCount + 1; // Update Django formset management
-    });
-});
-
-        // CSRF token setup (if needed for POST requests; GET requests typically don’t require it)
-    var csrftoken = '{{ csrf_token }}';
-
-    // When the first business_unit is changed, update its department dropdown
-    $("#business_unit").change(function () {
-      var businessUnitId = $(this).val();
-      
-      if (businessUnitId) {
-        $.ajax({
-          url: "{% url 'get_more_departments' %}",
-          type: "GET",
-          data: { business_unit_id: businessUnitId },
-          headers: { "X-CSRFToken": csrftoken },
-          success: function (data) {
-            var departmentDropdown = $("#department");
-            departmentDropdown.empty();
-            departmentDropdown.append('<option value="">Select department</option>');
-            $.each(data.departments, function (index, department) {
-              departmentDropdown.append('<option value="' + department.id + '">' + department.name + '</option>');
-            });
-          },
-          error: function () {
-            alert("Error loading departments.");
-          }
-        });
-      } else {
-        $("#department").empty().append('<option value="">Select department</option>');
-      }
-    });
+    document.addEventListener("DOMContentLoaded", function () {
+        let deletedForms = [];
     
-    // When the department is changed, update the employee dropdown
-    $("#department").change(function () {
-      var departmentId = $(this).val();
-  
-      if (departmentId) {
-        $.ajax({
-          url: "{% url 'get_employees' %}",
-          type: "GET",
-          data: { department_id: departmentId },
-          success: function (data) {
-            var employeeDropdown = $("#id_employee");  // Use the actual ID of the select element
-            employeeDropdown.empty();
-            employeeDropdown.append('<option value="">Select employee</option>');
-            $.each(data.employees, function (index, employee) {
-              employeeDropdown.append('<option value="' + employee.id + '">' + employee.name + '</option>');
+        function attachDeleteButtonListeners() {
+            document.querySelectorAll(".delete-asset").forEach((button, index) => {
+                button.style.display = index === 0 ? "none" : "inline-block"; // Hide first delete button
+                button.removeEventListener("click", deleteAssetHandler);
+                button.addEventListener("click", deleteAssetHandler);
             });
-          },
-          error: function () {
-            alert("Error loading employees.");
-          }
-        });
-      } else {
-        $("#id_employee").empty().append('<option value="">Select employee</option>');
-      }
-    });
-  
-    // Similarly, update the departmentto field based on business_unitto (if needed)
-    $("#business_unitto").change(function () {
-      var businessUnittoId = $(this).val();
-      
-      if (businessUnittoId) {
-        $.ajax({
-          url: "{% url 'get_more_departments' %}",
-          type: "GET",
-          data: { business_unit_id: businessUnittoId },
-          headers: { "X-CSRFToken": csrftoken },
-          success: function (data) {
-            var departmenttoDropdown = $("#departmentto");
-            departmenttoDropdown.empty();
-            departmenttoDropdown.append('<option value="">Select department</option>');
-            $.each(data.departments, function (index, department) {
-              departmenttoDropdown.append('<option value="' + department.id + '">' + department.name + '</option>');
+        }
+    
+        function deleteAssetHandler() {
+            let row = this.closest(".asset-row");
+            let formIndex = this.getAttribute("data-form-index");
+    
+            deletedForms.push(formIndex);
+            document.getElementById("deleted-forms").value = deletedForms.join(",");
+    
+            row.remove();
+        }
+    
+        document.getElementById('add-asset').addEventListener('click', function () {
+            let formsetDiv = document.getElementById('asset-formset');
+            let totalForms = document.getElementById("id_assets-TOTAL_FORMS");
+            let formCount = parseInt(totalForms.value);
+    
+            let newForm = formsetDiv.children[formsetDiv.children.length - 1].cloneNode(true);
+            
+            newForm.querySelectorAll("input, select, textarea, label").forEach(function (element) {
+                if (element.name) element.setAttribute("name", element.name.replace(/-\d+-/, `-${formCount}-`));
+                if (element.id) element.setAttribute("id", element.id.replace(/-\d+-/, `-${formCount}-`));
+                if (element.tagName !== "LABEL") element.value = ''; // Clear input fields
             });
-          },
-          error: function () {
-            alert("Error loading departments.");
-          }
+    
+            newForm.querySelector(".delete-asset").setAttribute("data-form-index", formCount);
+            formsetDiv.appendChild(newForm);
+            totalForms.value = formCount + 1;
+    
+            attachDeleteButtonListeners();
         });
-      } else {
-        $("#departmentto").empty().append('<option value="">Select department</option>');
-      }
+    
+        attachDeleteButtonListeners();
+    
+        // CSRF token setup for AJAX requests
+        var csrftoken = "{{ csrf_token }}";
+    
+        function updateDropdown(url, data, targetDropdown, defaultText) {
+            fetch(url + "?" + new URLSearchParams(data), {
+                headers: { "X-CSRFToken": csrftoken }
+            })
+            .then(response => response.json())
+            .then(data => {
+                targetDropdown.innerHTML = `<option value="">${defaultText}</option>`;
+                data.departments?.forEach(dept => targetDropdown.add(new Option(dept.name, dept.id)));
+                data.employees?.forEach(emp => targetDropdown.add(new Option(emp.name, emp.id)));
+            })
+            .catch(() => alert(`Error loading ${defaultText.toLowerCase()}.`));
+        }
+    
+        // Event listeners for Business Unit changes
+        document.getElementById("business_unit").addEventListener("change", function () {
+            updateDropdown("{% url 'get_more_departments' %}", { business_unit_id: this.value }, 
+                           document.getElementById("department"), "Select department");
+        });
+    
+        document.getElementById("department").addEventListener("change", function () {
+            updateDropdown("{% url 'get_employees' %}", { department_id: this.value }, 
+                           document.getElementById("id_employee"), "Select employee");
+        });
+    
+        document.getElementById("business_unitto").addEventListener("change", function () {
+            updateDropdown("{% url 'get_more_departments' %}", { business_unit_id: this.value }, 
+                           document.getElementById("departmentto"), "Select department");
+        });
     });
-  </script>
+    </script>
+    
 {% endblock %}
