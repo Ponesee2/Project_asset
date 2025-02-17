@@ -211,7 +211,8 @@ class AssignedAsset(models.Model):
         related_name='assigned_assets', 
         on_delete=models.PROTECT
     )
-
+    is_returned = models.BooleanField(default=False) 
+ 
     def save(self, *args, **kwargs):
         # Assign the asset and archive it
         self.asset.status = Asset.StatusChoices.ASSIGNED  # Change status to Assigned
