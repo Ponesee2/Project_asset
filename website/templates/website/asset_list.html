@@ -39,8 +39,7 @@
                     <th>Name</th>
                     <th>Category</th>
                     <th>Model</th>
-                    <th>Total Asset Count</th>
-                    <th>Available Asset Count</th>
+                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -52,8 +51,7 @@
                     <td>{{ asset.name }}</td>
                     <td>{{ asset.asset_category.name }}</td>               
                     <td>{{ asset.asset_model.model }}</td>
-                    <td>{{ asset.total_quantity }}</td>
-                    <td>{{ asset.available_quantity }}</td>
+                    <td>{{ asset.status }}</td>
                     <td>
                         <a href="{% url 'asset_edit' asset.pk %}" class="btn btn-warning">Edit</a>
                         <a class="btn btn-danger" href="{% url 'asset_delete' asset.pk %}">Delete</a>

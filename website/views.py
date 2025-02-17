@@ -730,22 +730,23 @@ def get_employees(request):
         for emp in employees_qs
     ]
     
-    return JsonResponse({"employees": employees})
+    return JsonResponse({"employees": employees})  
 
-def return_asset(request):
-    # Get all assigned assets where the asset is not archived
-    assigned_assets = AssignedAsset.objects.filter(asset__status='Assigned', asset__is_archived=False)
 
-    if request.method == 'POST':
-        asset_id = request.POST.get('asset_id')
-        asset_transaction = AssignedAsset.objects.get(id=asset_id)
 
-        # Update the asset status instead of transaction
-        asset_transaction.asset.status = 'Available'  # Make it available again
-        asset_transaction.asset.is_archived = False  # Unarchive the asset
-        asset_transaction.asset.save()
-
-        return redirect('return_asset')  # Refresh the page
-    print(request.POST)
-
-    return render(request, 'website/assigned_asset_returned.html', {'assigned_assets': assigned_assets})
+def return_assigned_asset(request, assigned_asset_id):
+    assigned_asset = get_object_or_404(AssignedAsset, id=assigned_asset_id)
+    
+    # Update asset status
+    assigned_asset.asset.status = 'Available'
+    assigned_asset.asset.is_archived = False
+    assigned_asset.asset.save()
+    
+    # Mark assigned asset as returned
+    assigned_asset.is_returned = True
+    assigned_asset.save()
+    
+    messages.success(request, f"{assigned_asset.asset.name} has been returned successfully.")
+    
+    # Pass it as a list to avoid iteration issues in the template
+    return render(request, "website/assigned_asset_returned.html", {'contexts': [assigned_asset]})

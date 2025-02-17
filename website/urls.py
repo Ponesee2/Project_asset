@@ -45,7 +45,7 @@ urlpatterns = [
     path('get-departments/', views.get_departments, name='get_departments'),
     path('get_more_departments', views.get_more_departments, name='get_more_departments'),
     path('get-employees/', views.get_employees, name='get_employees'),
-    path('return_asset', views.return_asset, name='return_asset'),
+    path('return-asset/<int:assigned_asset_id>/', views.return_assigned_asset, name='return_assigned_asset'),
 ]
 
 if settings.DEBUG:
