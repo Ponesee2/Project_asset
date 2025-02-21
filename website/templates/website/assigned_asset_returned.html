@@ -13,7 +13,7 @@
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
               <li class="breadcrumb-item active">Return Assigned Asset</li>
             </ol>
           </div>
@@ -21,40 +21,46 @@
       </div>
     </div>
 
-    <table class="table table-striped table-hover table-bordered">
-      <thead> 
-          <th>Transaction ID</th>
-          <th>Employee</th>
-          <th>Business Unit</th>
-          <th>Purpose</th>
-          <th>Assets</th>  
-        </tr>
-      </thead>
-      <tbody>
-      {% for context in contexts %}
-        <tr>
-          <td>{{ context.transaction.transaction_id }}</td>  <!-- Changed to ID since asset is likely an object -->
-          <td>{{ context.transaction.employee }}</td>
-          <td>{{ context.transaction.business_unit }}</td>
-          <td>{{ context.transaction.purpose }}</td>
-          <td>
-            {% for assigned_asset in context.assigned_asset.all %}
-              <div>
-                {{ assigned_asset.asset.name }}
-                {% if assigned_asset.is_returned %}
-                  <span style="color: green;">(Returned)</span>
-                {% else %}
-                  <form action="{% url 'return_assigned_asset' assigned_asset.id %}" method="POST">
-                    {% csrf_token %}
-                    <button type="submit">Return</button>
-                  </form>
-                {% endif %}
-              </div>
-            {% endfor %}
-          </td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
+    {% if messages %}
+      <div class="container">
+        {% for message in messages %}
+          <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="container">
+      <table class="table table-striped table-hover table-bordered">
+        <thead> 
+          <tr>
+            <th>Transaction ID</th>
+            <th>Employee</th>
+            <th>Business Unit</th>
+            <th>Purpose</th>
+            <th>Asset</th>  
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ assigned_asset.transaction.transaction_id }}</td>
+            <td>{{ assigned_asset.transaction.employee }}</td>
+            <td>{{ assigned_asset.transaction.business_unit }}</td>
+            <td>{{ assigned_asset.transaction.purpose }}</td>
+            <td>{{ assigned_asset.asset.name }}</td>
+            <td>
+              {% if assigned_asset.is_returned %}
+                <span class="badge bg-success">Returned</span>
+              {% else %}
+                <form action="{% url 'return_assigned_asset' assigned_asset.id %}" method="POST">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-primary">Return</button>
+                </form>
+              {% endif %}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 {% endblock %}

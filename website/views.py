@@ -307,305 +307,8 @@ def assigned_asset_list(request):
     return render(request, "website/assigned_asset_list.html", {"transactions": transactions})
 
 
-# def assigned_asset_create(request):
-#     if request.method == "POST":
-#         transaction_form = AssignedAssetTransactionForm(request.POST)
-#         asset_formset = AssignedAssetFormSet(request.POST)
-
-#         if transaction_form.is_valid() and asset_formset.is_valid():
-#             transaction = transaction_form.save()  # Save transaction first
-#             asset_instances = asset_formset.save(commit=False)
-#             for asset in asset_instances:
-#                 asset.transaction = transaction  # Link assets to transaction
-#                 asset.save()
-#             return redirect("assigned_asset_list")
-#     else:
-#         transaction_form = AssignedAssetTransactionForm()
-#         asset_formset = AssignedAssetFormSet()
-
-#     return render(request, "website/assigned_asset_form.html", {
-#         "transaction_form": transaction_form,
-#         "asset_formset": asset_formset
-#     })
-
-# def assigned_asset_update(request, pk):
-#     transaction = get_object_or_404(AssignedAssetTransaction, pk=pk)
-#     if request.method == "POST":
-#         transaction_form = AssignedAssetTransactionForm(request.POST, instance=transaction)
-#         asset_formset = AssignedAssetFormSet(request.POST, instance=transaction)
-
-#         if transaction_form.is_valid() and asset_formset.is_valid():
-#             transaction = transaction_form.save()
-#             asset_instances = asset_formset.save(commit=False)
-#             for asset in asset_instances:
-#                 asset.transaction = transaction
-#                 asset.save()
-#             return redirect("assigned_asset_list")
-#     else:
-#         transaction_form = AssignedAssetTransactionForm(instance=transaction)
-#         asset_formset = AssignedAssetFormSet(instance=transaction)
-#     return render(request, "website/assigned_asset_form.html", {
-#         "transaction_form": transaction_form,
-#         "asset_formset": asset_formset,
-#     })
-
-# def assigned_asset_create(request):
-#     business_unit_id = request.POST.get('business_unit') if request.method == 'POST' else None
-
-#     if request.method == "POST":
-#         transaction_form = AssignedAssetTransactionForm(request.POST, business_unit_id=business_unit_id)
-#         asset_formset = AssignedAssetFormSet(request.POST)
-
-#         if transaction_form.is_valid() and asset_formset.is_valid():
-#             transaction = transaction_form.save()
-#             asset_instances = asset_formset.save(commit=False)
-
-#             for assigned_asset in asset_instances:
-#                 asset = assigned_asset.asset
-#                 if assigned_asset.quantity_assigned <= asset.available_quantity:
-#                     assigned_asset.transaction = transaction
-#                     asset.available_quantity -= assigned_asset.quantity_assigned
-#                     if asset.available_quantity == 0:
-#                         asset.is_archived = True  # Optionally archive the asset
-#                     asset.save()
-#                     assigned_asset.save()
-#                 else:
-#                     # Handle the case where assigned quantity exceeds available quantity
-#                     # This should be caught by form validation, but included here for safety
-#                     pass
-
-#             return redirect("assigned_asset_list")
-#     else:
-#         transaction_form = AssignedAssetTransactionForm()
-#         asset_formset = AssignedAssetFormSet()
-
-#     return render(request, "website/assigned_asset_form.html", {
-#         "transaction_form": transaction_form,
-#         "asset_formset": asset_formset
-#     })
-
-from django.contrib import messages
-
-# def assigned_asset_create(request):
-#     business_unit_id = request.POST.get('business_unit') if request.method == 'POST' else request.GET.get('business_unit')
-
-#     if request.method == "POST":
-#         transaction_form = AssignedAssetTransactionForm(request.POST, business_unit_id=business_unit_id)
-#         asset_formset = AssignedAssetFormSet(request.POST)
-
-#         if transaction_form.is_valid() and asset_formset.is_valid():
-#             transaction = transaction_form.save(commit=False)
-#             transaction.save()  # Save transaction first before assigning assets
-            
-#             asset_instances = asset_formset.save(commit=False)
-#             insufficient_assets = []  # Track assets with insufficient quantity
-
-#             for assigned_asset in asset_instances:
-#                 asset = assigned_asset.asset
-
-#                 if assigned_asset.quantity_assigned > asset.available_quantity:
-#                     insufficient_assets.append(asset.name)
-#                 else:
-#                     assigned_asset.transaction = transaction
-#                     asset.available_quantity -= assigned_asset.quantity_assigned
-#                     if asset.available_quantity == 0:
-#                         asset.is_archived = True  # Optionally archive the asset
-
-#             # If there are insufficient assets, display error and reload the form
-#             if insufficient_assets:
-#                 messages.error(request, f"Not enough quantity available for: {', '.join(insufficient_assets)}")
-#                 return render(request, "website/assigned_asset_form.html", {
-#                     "transaction_form": transaction_form,
-#                     "asset_formset": asset_formset
-#                 })
-
-#             # If no errors, save all assigned assets and update inventory efficiently
-#             for assigned_asset in asset_instances:
-#                 assigned_asset.save()
-#             Asset.objects.bulk_update([a.asset for a in asset_instances], ["available_quantity", "is_archived"])
-
-#             messages.success(request, "Assets successfully assigned.")
-#             return redirect("assigned_asset_list")
-
-#     else:
-#         transaction_form = AssignedAssetTransactionForm(business_unit_id=business_unit_id)
-#         asset_formset = AssignedAssetFormSet()
-
-#     return render(request, "website/assigned_asset_form.html", {
-#         "transaction_form": transaction_form,
-#         "asset_formset": asset_formset
-#     })
-
-# def assigned_asset_create(request):
-#     business_unit_id = request.POST.get('business_unit') if request.method == 'POST' else request.GET.get('business_unit')
-
-#     if request.method == "POST":
-#         transaction_form = AssignedAssetTransactionForm(request.POST, business_unit_id=business_unit_id)
-#         asset_formset = AssignedAssetFormSet(request.POST)
-
-#         if transaction_form.is_valid() and asset_formset.is_valid():
-#             transaction = transaction_form.save(commit=False)
-#             transaction.save()  # Save transaction first
-
-#             asset_instances = asset_formset.save(commit=False)
-#             insufficient_assets = []
-
-#             for assigned_asset in asset_instances:
-#                 asset = assigned_asset.asset
-
-#                 if assigned_asset.quantity_assigned > asset.available_quantity:
-#                     insufficient_assets.append(asset.name)
-#                 else:
-#                     assigned_asset.transaction = transaction
-#                     asset.available_quantity -= assigned_asset.quantity_assigned
-#                     if asset.available_quantity == 0:
-#                         asset.is_archived = True  # Optionally archive the asset
-
-#             if insufficient_assets:
-#                 messages.error(request, f"Not enough quantity available for: {', '.join(insufficient_assets)}")
-#                 return render(request, "website/assigned_asset_form.html", {
-#                     "transaction_form": transaction_form,
-#                     "asset_formset": asset_formset
-#                 })
-
-#             # Save assigned assets and update asset inventory
-#             for assigned_asset in asset_instances:
-#                 assigned_asset.save()
-
-#             assets_to_update = Asset.objects.filter(id__in=[a.asset.id for a in asset_instances])
-#             for asset in assets_to_update:
-#                 asset.save()
-
-#             messages.success(request, "Assets successfully assigned.")
-#             return redirect("assigned_asset_list")
-
-#     else:
-#         transaction_form = AssignedAssetTransactionForm(business_unit_id=business_unit_id)
-#         asset_formset = AssignedAssetFormSet()
-
-#     return render(request, "website/assigned_asset_form.html", {
-#         "transaction_form": transaction_form,
-#         "asset_formset": asset_formset
-#     })
-
-# def assigned_asset_create(request):
-#     if request.method == "POST":
-#         # Get the business_unit value from POST data
-#         business_unit_id = request.POST.get('business_unit')
-        
-#         # Initialize the transaction form with the POST data and any additional parameters
-#         transaction_form = AssignedAssetTransactionForm(request.POST, business_unit_id=business_unit_id)
-        
-#         # Validate the transaction form first so we can get the parent instance.
-#         if transaction_form.is_valid():
-#             # Get an unsaved instance of the transaction
-#             transaction = transaction_form.save(commit=False)
-#             # Initialize the asset inline formset with the POST data and the parent instance
-#             asset_formset = AssignedAssetFormSet(request.POST, instance=transaction)
-#         else:
-#             # If the transaction form isn't valid, initialize the formset without an instance.
-#             asset_formset = AssignedAssetFormSet(request.POST)
-        
-#         # Now check that both the transaction form and the asset formset are valid.
-#         if transaction_form.is_valid() and asset_formset.is_valid():
-#             # Save the parent instance
-#             transaction.save()
-            
-#             # Save the asset formset but do not commit immediately
-#             asset_instances = asset_formset.save(commit=False)
-#             insufficient_assets = []
-            
-#             # Process each asset assignment
-#             for assigned_asset in asset_instances:
-#                 asset = assigned_asset.asset
-#                 if assigned_asset.quantity_assigned > asset.available_quantity:
-#                     insufficient_assets.append(asset.name)
-#                 else:
-#                     # Associate the asset with the transaction
-#                     assigned_asset.transaction = transaction
-#                     # Deduct the assigned quantity from the asset’s available quantity
-#                     asset.available_quantity -= assigned_asset.quantity_assigned
-#                     if asset.available_quantity == 0:
-#                         asset.is_archived = True  # Optionally archive the asset
-            
-#             if insufficient_assets:
-#                 # If there are any issues with asset quantities, display an error message
-#                 from django.contrib import messages
-#                 messages.error(request, f"Not enough quantity available for: {', '.join(insufficient_assets)}")
-#                 return render(request, "website/assigned_asset_form.html", {
-#                     "transaction_form": transaction_form,
-#                     "asset_formset": asset_formset
-#                 })
-            
-#             # Save each assigned asset
-#             for assigned_asset in asset_instances:
-#                 assigned_asset.save()
-            
-#             # Save updated asset details
-#             for asset in {a.asset for a in asset_instances}:
-#                 asset.save()
-            
-#             from django.contrib import messages
-#             messages.success(request, "Assets successfully assigned.")
-#             return redirect("assigned_asset_list")
-        
-#     else:
-#         # On GET, try to pick up the business_unit from the GET parameters (if available)
-#         business_unit_id = request.GET.get('business_unit')
-#         transaction_form = AssignedAssetTransactionForm(business_unit_id=business_unit_id)
-#         # Create a new (unsaved) parent instance for the formset to bind to
-#         transaction_instance = AssignedAssetTransaction()
-#         asset_formset = AssignedAssetFormSet(instance=transaction_instance)
-    
-#     return render(request, "website/assigned_asset_form.html", {
-#         "transaction_form": transaction_form,
-#         "asset_formset": asset_formset
-#     })
-
-# def assigned_asset_create(request):
-#     if request.method == "POST":
-#         transaction_form = AssignedAssetTransactionForm(request.POST)
-#         asset_formset = AssignedAssetFormSet(request.POST)
-
-#         if transaction_form.is_valid() and asset_formset.is_valid():
-#             with db_transaction.atomic():  # Ensures atomic operations
-#                 transaction = transaction_form.save()
-#                 asset_instances = asset_formset.save(commit=False)
-
-#                 assigned_assets = set()
-
-#                 for assigned_asset in asset_instances:
-#                     asset = assigned_asset.asset
-
-#                     if asset.id in assigned_assets:
-#                         messages.error(request, f"Duplicate assignment detected for asset: {asset.name}")
-#                         return render(
-#                             request, "website/assigned_asset_form.html",
-#                             {"transaction_form": transaction_form, "asset_formset": asset_formset}
-#                         )
-
-#                     assigned_assets.add(asset.id)
-#                     assigned_asset.transaction = transaction
-#                     assigned_asset.save()
-
-#                 messages.success(request, "Assets successfully assigned.")
-#                 return redirect("assigned_asset_list")
-
-#         messages.error(request, "Please correct the errors below.")
-
-#     else:  # GET request
-#         transaction_form = AssignedAssetTransactionForm()
-#         transaction_instance = AssignedAssetTransaction()
-#         asset_formset = AssignedAssetFormSet(instance=transaction_instance)
-
-#     return render(
-#         request, "website/assigned_asset_form.html",
-#         {"transaction_form": transaction_form, "asset_formset": asset_formset}
-#     )
-
 from django.db import transaction as db_transaction
-
-
+from django.contrib import messages
 
 def assigned_asset_create(request):
     if request.method == "POST":
@@ -734,6 +437,24 @@ def get_employees(request):
 
 
 
+# def return_assigned_asset(request, assigned_asset_id):
+#     assigned_asset = get_object_or_404(AssignedAsset, id=assigned_asset_id)
+    
+#     # Update asset status
+#     assigned_asset.asset.status = 'Available'
+#     assigned_asset.asset.is_archived = False
+#     assigned_asset.asset.save()
+    
+#     # Mark assigned asset as returned
+#     assigned_asset.is_returned = True
+#     assigned_asset.save()
+    
+#     messages.success(request, f"{assigned_asset.asset.name} has been returned successfully.")
+    
+#     # Pass it as a list to avoid iteration issues in the template
+#     return render(request, "website/assigned_asset_returned.html", {'contexts': [assigned_asset]})
+
+
 def return_assigned_asset(request, assigned_asset_id):
     assigned_asset = get_object_or_404(AssignedAsset, id=assigned_asset_id)
     
@@ -748,5 +469,5 @@ def return_assigned_asset(request, assigned_asset_id):
     
     messages.success(request, f"{assigned_asset.asset.name} has been returned successfully.")
     
-    # Pass it as a list to avoid iteration issues in the template
-    return render(request, "website/assigned_asset_returned.html", {'contexts': [assigned_asset]})
+    # Redirect back to the assigned assets list after returning
+    return redirect('assigned_asset_list')  # Ensure this URL exists in your urls.py
