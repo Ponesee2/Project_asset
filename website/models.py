@@ -204,12 +204,12 @@ class AssignedAsset(models.Model):
     transaction = models.ForeignKey(
         AssignedAssetTransaction, 
         related_name="assets", 
-        on_delete=models.PROTECT
+        on_delete=models.CASCADE
     )
     asset = models.ForeignKey(
         Asset, 
         related_name='assigned_assets', 
-        on_delete=models.PROTECT
+        on_delete=models.CASCADE
     )
     is_returned = models.BooleanField(default=False) 
  
