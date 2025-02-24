@@ -454,20 +454,66 @@ def get_employees(request):
 #     # Pass it as a list to avoid iteration issues in the template
 #     return render(request, "website/assigned_asset_returned.html", {'contexts': [assigned_asset]})
 
+# from django.db import transaction
+# def return_assigned_asset(request, transaction_id):
+#     # Fetch all assigned assets for this transaction
+#     assigned_assets = AssignedAsset.objects.filter(transaction_id=transaction_id, is_returned=False)
 
-def return_assigned_asset(request, assigned_asset_id):
-    assigned_asset = get_object_or_404(AssignedAsset, id=assigned_asset_id)
-    
-    # Update asset status
-    assigned_asset.asset.status = 'Available'
-    assigned_asset.asset.is_archived = False
-    assigned_asset.asset.save()
-    
-    # Mark assigned asset as returned
-    assigned_asset.is_returned = True
-    assigned_asset.save()
-    
-    messages.success(request, f"{assigned_asset.asset.name} has been returned successfully.")
-    
-    # Redirect back to the assigned assets list after returning
-    return redirect('assigned_asset_list')  # Ensure this URL exists in your urls.py
+#     if not assigned_assets.exists():
+#         messages.warning(request, "No assigned assets found for this transaction or they are already returned.")
+#         return redirect('assigned_asset_list')
+
+#     with transaction.atomic():
+#         asset_names = []  # To store names of returned assets
+
+#         for assigned_asset in assigned_assets:
+#             if assigned_asset.asset:  # Ensure asset exists
+#                 assigned_asset.asset.status = 'Available'
+#                 assigned_asset.asset.is_archived = False
+#                 assigned_asset.asset.save()
+
+#             assigned_asset.is_returned = True
+#             assigned_asset.save()
+
+#             asset_names.append(assigned_asset.asset.name)
+
+#     # Show success message listing all returned assets
+#     messages.success(request, f"Assets returned successfully: {', '.join(asset_names)}")
+
+#     return redirect('assigned_asset_list')\
+
+from django.db import transaction
+def return_assigned_assets(request, transaction_id):
+    assigned_assets = AssignedAsset.objects.filter(transaction__transaction_id=transaction_id, is_returned=False)
+
+    if not assigned_assets.exists():
+        messages.warning(request, "No assigned assets found for this transaction or they are already returned.")
+        return redirect('transaction_assets_list', transaction_id=transaction_id)
+
+    with transaction.atomic():
+        asset_names = []  
+
+        for assigned_asset in assigned_assets:
+            asset = assigned_asset.asset  # Assign to a variable for clarity
+            if asset:
+                asset.status = 'Available'
+                asset.is_archived = False
+                asset.save(update_fields=['status', 'is_archived'])  # 🔥 Ensures fields are updated
+
+            assigned_asset.is_returned = True
+            assigned_asset.save(update_fields=['is_returned'])  # 🔥 Save assigned asset properly
+
+            if asset:
+                asset_names.append(asset.name)
+
+    messages.success(request, f"Assets returned successfully: {', '.join(asset_names)}")
+    return redirect('transaction_assets_list', transaction_id=transaction_id)
+
+def transaction_assets_list(request, transaction_id):
+    transaction = AssignedAssetTransaction.objects.get(transaction_id=transaction_id)
+    assigned_assets = AssignedAsset.objects.filter(transaction=transaction)
+
+    return render(request, 'website/transaction_asset.html', {
+        'transaction': transaction,
+        'assigned_assets': assigned_assets
+    })
