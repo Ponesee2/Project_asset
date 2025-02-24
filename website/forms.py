@@ -348,9 +348,9 @@ def __init__(self, *args, **kwargs):
             business_unit_id=business_unit_id
         )
     else:
-        self.fields['department'].queryset = Department.objects.all()  # 👈 Fallback to all departments (optional)
+        self.fields['department'].queryset = Department.objects.all()  
 
-    # 🚀 Fix: Ensure departmentto queryset is populated
+    
     if self.instance.pk and self.instance.business_unitto:
         self.fields['departmentto'].queryset = Department.objects.filter(
             business_unit=self.instance.business_unitto

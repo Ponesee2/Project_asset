@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
-
 {% load static %}
+
 {% block title %}
     Supplier List
 {% endblock %}
+
 {% block content %}
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -13,33 +14,27 @@
           <div class="col-sm-6">
             <h1 class="m-0">Supplier List</h1>
           </div>
-          <!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item">
-                <a href="#">Home</a>
-              </li>
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
               <li class="breadcrumb-item active">Supplier List</li>
             </ol>
           </div>
-          <!-- /.col -->
         </div>
-        <!-- /.row -->
       </div>
-      <!-- /.container-fluid -->
     </div>
-    <!-- /.content-header -->
 
     <!-- Main content -->
     <section class="content">
       <div class="container-fluid">
-        <!-- Your content here -->
-        <table class="table table-bordered">
+        <!-- Asset Table -->
+        <table id="assetTable" class="table table-bordered">
             <thead>
                 <tr>
                     <th>Asset Name</th>
                     <th>Status</th>
                     <th>Returned</th>
+                    <th>Action</th>  <!-- New Column for Action Buttons -->
                 </tr>
             </thead>
             <tbody>
@@ -48,51 +43,36 @@
                     <td>{{ asset.asset.name }}</td>
                     <td>{{ asset.asset.status }}</td>
                     <td>{% if asset.is_returned %} ✅ Yes {% else %} ❌ No {% endif %}</td>
+                    <td>
+                        {% if not asset.is_returned %}
+                        <a href="{% url 'return_single_asset' asset.id %}" class="btn btn-sm btn-success">
+                            Return
+                        </a>
+                        {% else %}
+                        <button class="btn btn-sm btn-secondary" disabled>Returned</button>
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+
         <!-- Return All Assets in Transaction -->
-        <a class="btn btn-primary" href="{% url 'return_assigned_assets' transaction_id=transaction.transaction_id %}">Return Assets</a>
-        </div>
+        {% comment %} <a class="btn btn-primary" href="{% url 'return_assigned_assets' transaction_id=transaction.transaction_id %}">Return All</a> {% endcomment %}
+        <a class="btn btn-secondary" href="{% url 'assigned_asset_list' %}">Cancel</a>
+      </div>
     </section>
-    <!-- /.content -->
   </div>
+
   <script>
     $(document).ready(function() {
-        var table = $('#businesstable').DataTable({
+        $('#assetTable').DataTable({
             responsive: true,
             autoWidth: false,
             searching: true,
-            ordering: true,
-            select: {
-                style: 'multi' // Enable multi-select
-            },
-            columnDefs: [
-                { targets: [0, 1, 2], searchable: true }, // Enable search for specific columns
-                { targets: [3], orderable: false } // Disable sorting for actions column
-            ],
-            initComplete: function () {
-                var business_unit = $('#business_unit');
-        
-                // Populate Academic Term Filter Dropdown (Column 3)
-                this.api().columns(2).every(function () {
-                    var column = this;
-                    column.data().unique().sort().each(function (d, j) {
-                        if (!$(`#business_unit option[value="${d}"]`).length) {
-                            business_unit.append('<option value="' + d + '">' + d + '</option>');
-                        }
-                    });
-                });
-            }
-        });
-
-        // Filter by Course Subject
-        $('#business_unit').on('change', function() {
-            var location = $(this).val();
-            table.column(2).search(location ? '^' + location + '$' : '', true, false).draw();
+            ordering: true
         });
     });
-
   </script>
+
 {% endblock %}
