@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
+
 {% load static %}
 {% block title %}
-Assigned Assets
+    Supplier List
 {% endblock %}
 {% block content %}
   <div class="content-wrapper">
@@ -10,7 +11,7 @@ Assigned Assets
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">Assigned Assets</h1>
+            <h1 class="m-0">Supplier List</h1>
           </div>
           <!-- /.col -->
           <div class="col-sm-6">
@@ -18,7 +19,7 @@ Assigned Assets
               <li class="breadcrumb-item">
                 <a href="#">Home</a>
               </li>
-              <li class="breadcrumb-item active">Assigned Assets</li>
+              <li class="breadcrumb-item active">Supplier List</li>
             </ol>
           </div>
           <!-- /.col -->
@@ -32,51 +33,28 @@ Assigned Assets
     <!-- Main content -->
     <section class="content">
       <div class="container-fluid">
-        <a href="{% url 'assigned_asset_create' %}" class="btn btn-success mb-3">Assign New Asset</a>
-
-        <div class="table-responsive">
-          <table id="businesstable" class="table table-striped table-hover table-bordered" data-search="true" data-pagination="true">
-            <thead class="thead-dark">
-              <tr>
-                <th>Transaction ID</th>
-                <th>Employee</th>
-                <th>Business Unit</th>
-                <th>Business Unit To</th>
-                <th>Purpose</th>
-                <th>Assets</th>
-              </tr>
+        <!-- Your content here -->
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Asset Name</th>
+                    <th>Status</th>
+                    <th>Returned</th>
+                </tr>
             </thead>
             <tbody>
-              {% for transaction in transactions %}
+                {% for asset in assigned_assets %}
                 <tr>
-                  <td>{{ transaction.transaction_id }}</td>
-                  <td>{{ transaction.employee }}</td>
-                  <td>{{ transaction.business_unit }}</td>
-                  <td>{{ transaction.business_unitto }}</td>
-                  <td>{{ transaction.purpose }}</td>
-                  <td>
-                    <a href="{% url 'assigned_asset_detail' transaction.pk %}" class="btn btn-info btn-sm">View</a>
-                    <a href="{% url 'assigned_asset_update' transaction.pk %}" class="btn btn-warning btn-sm">Edit</a>
-                    <a href="{% url 'assigned_asset_delete' transaction.pk %}" class="btn btn-danger btn-sm">Delete</a>
-                    {% if transaction.assets.all %}
-                    <a href="{% url 'transaction_assets_list' transaction_id=transaction.transaction_id %}" 
-                       class="btn btn-primary btn-sm">
-                        View Assigned Assets
-                    </a>
-                {% else %}
-                    <span class="text-muted">No Transaction</span>
-                {% endif %}
-                  </td>
+                    <td>{{ asset.asset.name }}</td>
+                    <td>{{ asset.asset.status }}</td>
+                    <td>{% if asset.is_returned %} ✅ Yes {% else %} ❌ No {% endif %}</td>
                 </tr>
-              {% empty %}
-                <tr>
-                  <td colspan="6" class="text-center">No assigned assets found.</td>
-                </tr>
-              {% endfor %}
+                {% endfor %}
             </tbody>
-          </table>
+        </table>
+        <!-- Return All Assets in Transaction -->
+        <a class="btn btn-primary" href="{% url 'return_assigned_assets' transaction_id=transaction.transaction_id %}">Return Assets</a>
         </div>
-      </div>
     </section>
     <!-- /.content -->
   </div>
