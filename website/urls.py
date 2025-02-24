@@ -46,7 +46,7 @@ urlpatterns = [
     path('get_more_departments', views.get_more_departments, name='get_more_departments'),
     path('get-employees/', views.get_employees, name='get_employees'),
     path('transaction/<str:transaction_id>/assets/', views.transaction_assets_list, name='transaction_assets_list'),
-    path('transaction/<str:transaction_id>/return/', views.return_assigned_assets, name='return_assigned_assets'),
+    path('return-asset/<int:asset_id>/', views.return_single_asset, name='return_single_asset'),
 ]
 
 if settings.DEBUG:

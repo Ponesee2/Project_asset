@@ -483,31 +483,63 @@ def get_employees(request):
 #     return redirect('assigned_asset_list')\
 
 from django.db import transaction
-def return_assigned_assets(request, transaction_id):
-    assigned_assets = AssignedAsset.objects.filter(transaction__transaction_id=transaction_id, is_returned=False)
+# def return_assigned_assets(request, transaction_id):
+#     assigned_assets = AssignedAsset.objects.filter(transaction__transaction_id=transaction_id, is_returned=False)
 
-    if not assigned_assets.exists():
-        messages.warning(request, "No assigned assets found for this transaction or they are already returned.")
-        return redirect('transaction_assets_list', transaction_id=transaction_id)
+#     if not assigned_assets.exists():
+#         messages.warning(request, "No assigned assets found for this transaction or they are already returned.")
+#         return redirect('transaction_assets_list', transaction_id=transaction_id)
 
+#     with transaction.atomic():
+#         asset_names = []  
+
+#         for assigned_asset in assigned_assets:
+#             asset = assigned_asset.asset  # Assign to a variable for clarity
+            
+#             if asset:
+#                 print(f"Before update: Asset {asset.name} - Status: {asset.status}, Archived: {asset.is_archived}")
+
+#                 # ✅ Ensure status is changed correctly
+#                 asset.status = Asset.StatusChoices.AVAILABLE
+#                 asset.is_archived = False
+#                 asset.save(update_fields=['status', 'is_archived'])  # Save changes
+
+#                 # ✅ If save() doesn't work, force database update
+#                 Asset.objects.filter(id=asset.id).update(status=Asset.StatusChoices.AVAILABLE, is_archived=False)
+
+#                 print(f"After update: Asset {asset.name} - Status: {asset.status}, Archived: {asset.is_archived}")
+
+#             assigned_asset.is_returned = True
+#             assigned_asset.save(update_fields=['is_returned'])  # Save assigned asset properly
+
+#             if asset:
+#                 asset_names.append(asset.name)
+
+#     messages.success(request, f"Assets returned successfully: {', '.join(asset_names)}")
+#     return redirect('transaction_assets_list', transaction_id=transaction_id)
+
+def return_single_asset(request, asset_id):
+    assigned_asset = get_object_or_404(AssignedAsset, id=asset_id, is_returned=False)
+    asset = assigned_asset.asset
+
+    # If there's no linked asset, show an error and redirect back.
+    if not asset:
+        messages.error(request, "No asset is linked to this assignment.")
+        return redirect('transaction_assets_list', transaction_id=assigned_asset.transaction.transaction_id)
+
+    # Perform the asset update and mark the assignment as returned atomically.
     with transaction.atomic():
-        asset_names = []  
+        # Update asset: set status to AVAILABLE and ensure it's not archived.
+        asset.status = Asset.StatusChoices.AVAILABLE
+        asset.is_archived = False
+        asset.save(update_fields=['status', 'is_archived'])
 
-        for assigned_asset in assigned_assets:
-            asset = assigned_asset.asset  # Assign to a variable for clarity
-            if asset:
-                asset.status = 'Available'
-                asset.is_archived = False
-                asset.save(update_fields=['status', 'is_archived'])  # 🔥 Ensures fields are updated
+        # Mark the assigned asset as returned.
+        assigned_asset.is_returned = True
+        assigned_asset.save(update_fields=['is_returned'])
 
-            assigned_asset.is_returned = True
-            assigned_asset.save(update_fields=['is_returned'])  # 🔥 Save assigned asset properly
-
-            if asset:
-                asset_names.append(asset.name)
-
-    messages.success(request, f"Assets returned successfully: {', '.join(asset_names)}")
-    return redirect('transaction_assets_list', transaction_id=transaction_id)
+    messages.success(request, f"Asset '{asset.name}' has been returned successfully.")
+    return redirect('transaction_assets_list', transaction_id=assigned_asset.transaction.transaction_id)
 
 def transaction_assets_list(request, transaction_id):
     transaction = AssignedAssetTransaction.objects.get(transaction_id=transaction_id)

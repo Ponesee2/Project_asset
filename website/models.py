@@ -212,14 +212,36 @@ class AssignedAsset(models.Model):
         on_delete=models.CASCADE
     )
     is_returned = models.BooleanField(default=False) 
- 
-    def save(self, *args, **kwargs):
-        # Assign the asset and archive it
-        self.asset.status = Asset.StatusChoices.ASSIGNED  # Change status to Assigned
-        self.asset.is_archived = True  # Archive the asset
-        self.asset.save()  # Save the asset update
 
-        super().save(*args, **kwargs)  # Save AssignedAsset instance
+    def save(self, *args, **kwargs):
+        # Only update the asset as assigned if it hasn't been marked as returned.
+        if not self.is_returned:
+            self.asset.status = Asset.StatusChoices.ASSIGNED  # Mark as Assigned
+            self.asset.is_archived = True  # Archive the asset
+            self.asset.save(update_fields=['status', 'is_archived'])
+        
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.asset.name} - {self.transaction.transaction_id} (Assigned)"
+ 
+    # def save(self, *args, **kwargs):
+    #     # Assign the asset and archive it
+    #     self.asset.status = Asset.StatusChoices.ASSIGNED  # Change status to Assigned
+    #     self.asset.is_archived = True  # Archive the asset
+    #     self.asset.save(update_fields=['status', 'is_archived'])# Save the asset update
+
+    #     super().save(*args, **kwargs)  # Save AssignedAsset instance
+
+    # def __str__(self):
+    #     return f"{self.asset.name} - {self.transaction.transaction_id} (Assigned)"
+    
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+@receiver(pre_save, sender=Asset)
+def enforce_asset_status(sender, instance, **kwargs):
+    if instance.is_archived and instance.status not in [
+        Asset.StatusChoices.AVAILABLE,
+        Asset.StatusChoices.ASSIGNED,
+    ]:
+        instance.status = Asset.StatusChoices.DISPOSED
